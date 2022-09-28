@@ -3,6 +3,7 @@
 #include "line.hpp"
 #include "vordiag.hpp"
 #include "vorline.hpp"
+#include "pixel.hpp"
 bool operator == (Point a, Point b);
 bool operator != (Point a, Point b);
 int divide(Vordiag vect, Vordiag& l_vect, Vordiag& r_vect)
@@ -18,6 +19,10 @@ int divide(Vordiag vect, Vordiag& l_vect, Vordiag& r_vect)
     return 0;
 }
 
+
+
+
+
 int lcross(Line line1, Line line2)
 {
     return (line1.second.x-line1.first.x)*(line2.second.y-line2.first.y)-(line1.second.y-line1.first.y)*(line2.second.x-line2.first.x);
@@ -25,20 +30,40 @@ int lcross(Line line1, Line line2)
 
 int ldot(Line line1, Line line2)
 {
-    return (line1.second.x-line1.first.x)*(line2.second.x-line2.first.x)+(line1.second.y-line1.first.y)*(line2.second.x-line2.first.x);
+    return (line1.second.x-line1.first.x)*(line2.second.x-line2.first.x)+(line1.second.y-line1.first.y)*(line2.second.y-line2.first.y);
 }
+int dist(Point a, Point b)
+{
+    Line t(a, b);
+    return ldot(t, t);
+}
+
+// 2 5 0 0
+
+// 0 7    2 5
+// 2*2+(-2)*(-2)
 
 Line upper_bound(Vordiag l_vect, Vordiag r_vect) // !!!!!!!should be added uppering
 {
     Point u = l_vect.right(), v = r_vect.left();
-    Line perp = (Point(u.y-v.y, v.x-u.x), Point());
-    for (auto i:l_vect.points) {
-        if (ldot(perp, Line(u, i)) > 0)
-            u = i;
-    }
-    for (auto i:r_vect.points) {
-        if (ldot(perp, Line(i, v)) > 0)
-            v = i;
+    Line perp = Line(Point(u.y-v.y, v.x-u.x), Point());
+    int flagl = 1, flagr = 1;
+    while (flagl == 1 || flagr == 1) {
+        flagl = 0, flagr = 0;
+        for (auto i = l_vect.points.begin(); i < l_vect.points.end(); i++) {
+            if (ldot(perp, Line(u, *i)) > 0) {
+                u = *i;
+                i = l_vect.points.begin();
+                flagl = 1;
+            }
+        }
+        for (auto i = r_vect.points.begin(); i < r_vect.points.end(); i++) {
+            if (ldot(perp, Line(*i, v)) > 0) {
+                v = *i;
+                i = r_vect.points.begin();
+                flagr = 1;
+            }
+        }
     }
     return Line(u, v);
 }
@@ -110,14 +135,14 @@ Vordiag merge(Vordiag l_vect, Vordiag r_vect)
         perr =  perc(srp, r_vect, smezh_point);
         if (perl == check && perr == check)
             break;
-       /* if (perl < perr) { !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        if (perl.y < perr.y) {
             per = perl;
             //otr.first = smezh_point.get_cord(); !!!!!!!!!!!!!!!!!!!!!
         }
         else {
             per = perr;
             //otr.second = smezh_point.get_cord(); !!!!!!!!!!!!!!!!!!!!!
-        }!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
+        }
     }
     Vordiag m_vect = l_vect; // !!!!!!!!!!!!!!!!!!!!!
     return m_vect;
@@ -141,6 +166,44 @@ Vordiag iter(Vordiag vect)
 
 int main()
 {
-    std::vector<Point> points(16);
+    int n = 4;
+    std::vector<Point> points(n);
+    points[0].x = 2;
+    points[1].x = 5;
+    points[2].x = 7;
+    points[3].x = 9;
+
+    points[0].y = 5;
+    points[1].y = 5;
+    points[2].y = 3;
+    points[3].y = 9;
+    std::vector<std::vector<Pixel>> pixels(HEIGHT, std::vector<Pixel>(WIDTH));
+    for (int i = 0; i < HEIGHT; i++) {
+        for (int j = 0; j < WIDTH; j++) {
+            int maxd = 1000000;
+            pixels[i][j].x = j;
+            pixels[i][j].y = i;
+            Point t(j, i);
+            for (int k = 0; k < n; k++) {
+                //std::cout << points[k].x << " " << points[k].y << " " << i << " " << j << " " << dist(t, points[k]) << std::endl;
+                if (dist(t, points[k]) < maxd) {
+                    maxd = dist(t, points[k]);
+                    pixels[i][j].color = k;
+                    if (maxd == 0) {
+                        pixels[i][j].color = 9;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    //std::cout << std::endl << std::endl;
+
+    for (int i = HEIGHT - 1; i >= 0; i--) {
+        for (int j = 0; j < WIDTH; j++) {
+            std::cout << pixels[i][j].color << " ";
+        }
+        std::cout << std::endl;
+    }
     return 0;
 }

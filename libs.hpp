@@ -1,6 +1,7 @@
 #pragma once
-#define HEIGHT 1000
-#define WIDTH 1000
+#define HEIGHT 10
+#define WIDTH 10
 #include <iostream>
 #include <vector>
 #include <utility>
+#include <math.h>
