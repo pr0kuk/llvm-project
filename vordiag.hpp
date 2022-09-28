@@ -4,5 +4,6 @@
 class Vordiag
 {
     public:
-        std::vector<Vorline> vorline;
+        std::vector<Vorline> vorlines;
+        std::vector<Point> points;
 };

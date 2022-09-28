@@ -1,7 +1,8 @@
 #include <utility>
 #include <vector>
+#include "line.hpp"
 class Vorcell
 {
     public:
-        std::vector<std::pair<std::pair<int,int>, std::pair<int,int>>> lines;
+        std::vector<Line> lines;
 };
