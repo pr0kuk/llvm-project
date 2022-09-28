@@ -1,5 +1,5 @@
 #pragma once
-#include <utility>
+#include "libs.hpp"
 #include "point.hpp"
 //#include "vorcel.hpp"
 class Line
@@ -7,4 +7,6 @@ class Line
     public:
         Point first;
         Point second;
+        Line();
+        Line(Point, Point);
 };

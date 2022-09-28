@@ -1,12 +1,8 @@
-#pragma once
-#define HEIGHT 1000
-#define WIDTH 1000
-#include <iostream>
-#include <vector>
+#include "libs.hpp"
 #include "point.hpp"
 #include "line.hpp"
 #include "vordiag.hpp"
-#include <utility>
+#include "vorline.hpp"
 bool operator == (Point a, Point b);
 bool operator != (Point a, Point b);
 int divide(Vordiag vect, Vordiag& l_vect, Vordiag& r_vect)
@@ -22,8 +18,9 @@ int divide(Vordiag vect, Vordiag& l_vect, Vordiag& r_vect)
     return 0;
 }
 
-Line upper_bound(Vordiag l_vect, Vordiag r_vect) {
-    Line ret;
+Line upper_bound(Vordiag l_vect, Vordiag r_vect)
+{
+    Line ret(l_vect.right(), r_vect.left());
     return ret;
 }
 
@@ -65,6 +62,7 @@ Point perc(Line srp, Vordiag vordiag, Point& smezh_point)
     }
     return ret;
 }
+
 
 
 Vordiag merge(Vordiag l_vect, Vordiag r_vect)

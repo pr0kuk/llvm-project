@@ -1,6 +1,4 @@
-#include <utility>
-#include <vector>
-#include "line.hpp"
+#include "libs.hpp"
 class Vorcell
 {
     public:

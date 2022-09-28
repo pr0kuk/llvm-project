@@ -1,6 +1,8 @@
-#include <utility>
-#include "line.hpp"
+#pragma once
+#include "libs.hpp"
 #include "point.hpp"
+#include "line.hpp"
+
 class Vorline
 {
     public:

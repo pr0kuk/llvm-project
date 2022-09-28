@@ -1,5 +1,4 @@
-#pragma once
-#include <utility>
+#include "libs.hpp"
 #include "point.hpp"
 
 std::pair<int, int> Point::get_cord() {

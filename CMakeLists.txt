@@ -10,4 +10,4 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 #include_directories(core/lib)
 
-add_executable(launcher main.cpp point.cpp)
+add_executable(launcher main.cpp point.cpp line.cpp vordiag.cpp)
