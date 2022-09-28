@@ -11,6 +11,14 @@ bool operator == (Point a, Point b);
 bool operator != (Point a, Point b);
 int divide(Vordiag vect, Vordiag& l_vect, Vordiag& r_vect)
 {
+    int n = vect.points.size();
+    int n1 = n / 2;
+    for (int i = 0; i < n; i++) {
+        if (i < n1)
+            l_vect.points.push_back(vect.points[i]);
+        else
+            r_vect.points.push_back(vect.points[i]);
+    }
     return 0;
 }
 
