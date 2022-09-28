@@ -18,10 +18,29 @@ int divide(Vordiag vect, Vordiag& l_vect, Vordiag& r_vect)
     return 0;
 }
 
-Line upper_bound(Vordiag l_vect, Vordiag r_vect) // should be added uppering
+int lcross(Line line1, Line line2)
 {
-    Line ret(l_vect.right(), r_vect.left());
-    return ret;
+    return (line1.second.x-line1.first.x)*(line2.second.y-line2.first.y)-(line1.second.y-line1.first.y)*(line2.second.x-line2.first.x);
+}
+
+int ldot(Line line1, Line line2)
+{
+    return (line1.second.x-line1.first.x)*(line2.second.x-line2.first.x)+(line1.second.y-line1.first.y)*(line2.second.x-line2.first.x);
+}
+
+Line upper_bound(Vordiag l_vect, Vordiag r_vect) // !!!!!!!should be added uppering
+{
+    Point u = l_vect.right(), v = r_vect.left();
+    Line perp = (Point(u.y-v.y, v.x-u.x), Point());
+    for (auto i:l_vect.points) {
+        if (ldot(perp, Line(u, i)) > 0)
+            u = i;
+    }
+    for (auto i:r_vect.points) {
+        if (ldot(perp, Line(i, v)) > 0)
+            v = i;
+    }
+    return Line(u, v);
 }
 
 Line serp(Line otr) {
@@ -42,11 +61,11 @@ Line serp(Line otr) {
 
 Point percline(Line line1, Line line2)
 {
-    if ((line1.second.x-line1.first.x)*(line2.second.y-line2.first.y)-(line1.second.y-line1.first.y)*(line2.second.x-line2.first.x) != 0) { // not parallel
+    if (lcross(line1, line2) != 0) { // not parallel
         return Point();
     }
     else { // parallel
-        if ((line2.second.x-line1.first.x)*(line2.first.y-line1.second.y)-(line2.second.y-line1.first.y)*(line2.first.x-line1.second.x) != 0) { // not the same
+        if (lcross(Line(line1.first, line2.second), Line(line1.second, line2.first))  != 0) { // not the same
                 int a1 = line1.first.y - line1.second.y;
                 int b1 = line1.first.x - line1.second.x;
                 int c1 = line1.first.x * line1.second.y - line1.second.x * line1.first.y;
