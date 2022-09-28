@@ -29,6 +29,16 @@ Line upper_bound(Vordiag l_vect, Vordiag r_vect) {
 
 Line serp(Line otr) {
     Line ret;
+    int a = (otr.first.y-otr.second.y)/(otr.first.x-otr.second.x);
+    int x0 = (otr.first.x+otr.second.x)/2;
+    int y0 = (otr.first.x+otr.second.x)/2;
+    int y = -WIDTH/a + x0/a + y0;
+    int x = -HEIGHT * a + x0 + y0 * a;
+    if (y < HEIGHT)
+        ret.second = Point(WIDTH, y);
+    else {
+        ret.second = Point(x, HEIGHT);
+    }
     return ret;
 }
 
