@@ -18,7 +18,7 @@ int divide(Vordiag vect, Vordiag& l_vect, Vordiag& r_vect)
     return 0;
 }
 
-Line upper_bound(Vordiag l_vect, Vordiag r_vect)
+Line upper_bound(Vordiag l_vect, Vordiag r_vect) // should be added uppering
 {
     Line ret(l_vect.right(), r_vect.left());
     return ret;
@@ -42,11 +42,25 @@ Line serp(Line otr) {
 
 Point percline(Line line1, Line line2)
 {
-    if ((line1.second.x-line1.first.x)*(line2.second.y-line2.first.y)-(line1.second.y-line1.first.y)*(line2.second.x-line2.first.x) != 0) {
+    if ((line1.second.x-line1.first.x)*(line2.second.y-line2.first.y)-(line1.second.y-line1.first.y)*(line2.second.x-line2.first.x) != 0) { // not parallel
         return Point();
     }
-    else {
-        return Point();
+    else { // parallel
+        if ((line2.second.x-line1.first.x)*(line2.first.y-line1.second.y)-(line2.second.y-line1.first.y)*(line2.first.x-line1.second.x) != 0) { // not the same
+                int a1 = line1.first.y - line1.second.y;
+                int b1 = line1.first.x - line1.second.x;
+                int c1 = line1.first.x * line1.second.y - line1.second.x * line1.first.y;
+                int a2 = line2.first.y - line2.second.y;
+                int b2 = line2.first.x - line2.second.x;
+                int c2 = line2.first.x * line2.second.y - line2.second.x * line2.first.y;
+                int det = a1 * b2 - a2 * b1;
+                int x = (b1 * c2 - b2 * c1) / det;
+                int y = (a2 * c1 - a1 * c2) / det;
+                return Point(x, y);
+        }
+        else { // the same
+            return Point(); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        }
     }
 }
 
