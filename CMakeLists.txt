@@ -1,13 +1,14 @@
 cmake_minimum_required(VERSION 3.16)
 project(llvm-project)
-
+link_directories("C:/Windows/SysWOW64")
 #set(CMAKE_CXX_FLAGS "-std=c++17")
 #set(CMAKE_CXX_COMPILER g++-9)
 set(EXECUTABLE_OUTPUT_PATH build)
 set(LIBRARY_OUTPUT_PATH build)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
+#set(LIBS glew32 freeglutd opengl32 glu32)
 #include_directories(core/lib)
-
-add_executable(launcher main.cpp point.cpp line.cpp vordiag.cpp)
+SET(PC_LIBS_PRIVATE "-lglew32 -lfreeglutd -lopengl32 -lglu32")
+add_executable(launcher test.cpp main.cpp point.cpp line.cpp vordiag.cpp)
+#target_link_libraries(launcher PRIVATE glew32 freeglutd opengl32 glu32)
