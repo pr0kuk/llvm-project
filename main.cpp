@@ -3,6 +3,7 @@
 #include "line.hpp"
 #include "vordiag.hpp"
 #include "vorline.hpp"
+#include<cstdlib>
 #include "pixel.hpp"
 bool operator == (Point a, Point b);
 bool operator != (Point a, Point b);
@@ -38,10 +39,6 @@ int dist(Point a, Point b)
     return ldot(t, t);
 }
 
-// 2 5 0 0
-
-// 0 7    2 5
-// 2*2+(-2)*(-2)
 
 Line upper_bound(Vordiag l_vect, Vordiag r_vect) // !!!!!!!should be added uppering
 {
@@ -162,30 +159,28 @@ Vordiag iter(Vordiag vect)
 }
 
 
+std::vector<float> getrgb(int color) {
+    std::vector<float> rgbcolor(3, 0);
+    float step = 3/(static_cast<float>(NUMBER_OF_POINTS));
+    while (color > 0) {
+        rgbcolor[color%3] += step;
+        color/=3;
+    }
+    return rgbcolor;
+}
 
-
-int main()
+int calculate(std::vector<std::vector<Pixel>>& pixels, std::vector<Point>& points)
 {
-    int n = 4;
-    std::vector<Point> points(n);
-    points[0].x = 2;
-    points[1].x = 5;
-    points[2].x = 7;
-    points[3].x = 9;
+    
+    std::cout << "Hi\n";
 
-    points[0].y = 5;
-    points[1].y = 5;
-    points[2].y = 3;
-    points[3].y = 9;
-    std::vector<std::vector<Pixel>> pixels(HEIGHT, std::vector<Pixel>(WIDTH));
     for (int i = 0; i < HEIGHT; i++) {
         for (int j = 0; j < WIDTH; j++) {
             int maxd = 1000000;
             pixels[i][j].x = j;
             pixels[i][j].y = i;
             Point t(j, i);
-            for (int k = 0; k < n; k++) {
-                //std::cout << points[k].x << " " << points[k].y << " " << i << " " << j << " " << dist(t, points[k]) << std::endl;
+            for (int k = 0; k < NUMBER_OF_POINTS; k++) {
                 if (dist(t, points[k]) < maxd) {
                     maxd = dist(t, points[k]);
                     pixels[i][j].color = k;
@@ -197,13 +192,58 @@ int main()
             }
         }
     }
+    std::cout << "Hi\n";
+
+    std::vector<std::pair<Pixel, std::set<int>>> ref;
+    std::set<int> st;
+    for (int i = 1; i < HEIGHT-1; i++) {
+        for (int j = 1; j < WIDTH-1; j++) {
+            st.clear();
+            for (int k = -1; k <= 1; k++) {
+                for (int l = -1; l <= 1; l++) {
+                    st.insert(pixels[i+k][j+l].color);
+                    if (i+k == HEIGHT || i+k == 0 || j+l == WIDTH || j+l == 0)
+                        st.insert(-1);
+                }
+            }
+            if (st.size() > 3)
+                ref.push_back(std::make_pair(pixels[i][j], st));
+        }
+    }
+    for (int i = 0; i < ref.size(); i++) {
+        std::cout << i << " " << ref[i].first.x << " " << ref[i].first.y << " " << ref[i].second.size() << std::endl;
+    }
+    std::cout << "Hi\n";
+
+    for (int i = 0; i < points.size(); i++) {
+        for (int j = 0; j < ref.size(); j++) {
+            if (ref[j].second.find(i) != ref[j].second.end() || *ref[j].second.end() == i) {
+                points[i].refpixels.push_back(ref[j].first);
+            }
+        }
+    }
+    std::cout << "Hi\n";
+
+    for (int i = 0; i < points.size(); i++) {
+        int sx = 0, sy = 0;
+        for (int j = 0; j < points[i].refpixels.size(); j++) {
+            std::cout << j << std::endl;
+
+            sx += points[i].refpixels[j].x;
+            sy += points[i].refpixels[j].y;
+
+        }
+        points[i].x = sx / points[i].refpixels.size();
+        points[i].y = sy / points[i].refpixels.size();
+    }
+    std::cout << "Hiend\n";
     //std::cout << std::endl << std::endl;
 
-    for (int i = HEIGHT - 1; i >= 0; i--) {
-        for (int j = 0; j < WIDTH; j++) {
-            std::cout << pixels[i][j].color << " ";
-        }
-        std::cout << std::endl;
-    }
+    // for (int i = HEIGHT - 1; i >= 0; i--) {
+    //     for (int j = 0; j < WIDTH; j++) {
+    //         std::cout << pixels[i][j].color << " ";
+    //     }
+    //     std::cout << std::endl;
+    // }
     return 0;
 }
