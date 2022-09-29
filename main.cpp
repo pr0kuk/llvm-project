@@ -171,6 +171,7 @@ int dist(Pixel& a, Point& b)
 // }
 
 
+
 std::vector<float> getrgb(int color) {
     std::vector<float> rgbcolor(3, 0);
     float step = 3/(static_cast<float>(NUMBER_OF_POINTS));
@@ -180,8 +181,32 @@ std::vector<float> getrgb(int color) {
     }
     return rgbcolor;
 }
+
+// std::vector<float> getrgb(int color) { 
+//     std::vector<float> rgbcolor(3, 0);
+//     std::cout << color << " ";
+//     int t =color;
+//     float step = 3/(static_cast<float>(NUMBER_OF_POINTS + 3 - NUMBER_OF_POINTS % 3));
+//     while (1) {
+//         rgbcolor[color%3] += step;
+//         color/=3;
+//         if (color <= 0)
+//             break;
+//     }
+//     if (t == -1) {
+//         std::cout << "??";
+//         rgbcolor[0] = 0.24;
+//         std::cout << rgbcolor[0] << std::endl;
+//     }
+//     for (auto i:rgbcolor) {
+//         std::cout << i << " ";
+//     }
+//     std::cout << std::endl;
+//     return rgbcolor;
+// }
 int recalc(std::vector<std::vector<Pixel>>& pixels, std::vector<Point>& points)
 {
+    unsigned int start = clock(), end = 0;
     int ret = 0, t = 0;
     std::vector<int> sx(points.size());
     std::vector<int> sy(points.size());
@@ -193,12 +218,6 @@ int recalc(std::vector<std::vector<Pixel>>& pixels, std::vector<Point>& points)
             ns[pixels[i][j].color]++;
         }
     }
-
-    // for (int i = 0; i < points.size(); i++) {
-    //     points[i].x = sx[i] / ns[i];
-    //     points[i].y = sy[i] / ns[i];
-    // }
-
     for (int i = 0; i < points.size(); i++) {
         t = sx[i] / ns[i];
         if (points[i].x == t)
@@ -211,11 +230,14 @@ int recalc(std::vector<std::vector<Pixel>>& pixels, std::vector<Point>& points)
         else
             points[i].y = t;
     }
-    //std::cout << ret << std::endl;
+    end = clock();
+    std::cout << "recalc " << end-start << std::endl;
+    std::cout << ret << std::endl;
     return ret;
 }
 int calculate(std::vector<std::vector<Pixel>>& pixels, std::vector<Point>& points)
 {
+    unsigned int start = clock(), end = 0;
     //std::cout << "start\n";
     int d = 0, maxd = 1000000;
     for (int i = 0; i < HEIGHT; i++) {
@@ -235,6 +257,8 @@ int calculate(std::vector<std::vector<Pixel>>& pixels, std::vector<Point>& point
             }
         }
     }
+        end = clock();
+  std::cout << "main " << end-start << std::endl;
     //std::cout << "end\n";
     // std::cout << "Hi\n";
 
