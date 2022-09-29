@@ -182,6 +182,19 @@ std::vector<float> getrgb(int color) {
     return rgbcolor;
 }
 
+
+// std::vector<float> getrgb(int color) { 
+//     std::vector<float> rgbcolor(3, 0);
+//     float step = 3/(static_cast<float>(NUMBER_OF_POINTS + 3 - NUMBER_OF_POINTS % 3));
+//     while (1) {
+//         rgbcolor[color%3] += step;
+//         color/=3;
+//         if (color <= 0)
+//             break;
+//     }
+//     return rgbcolor;
+// }
+
 // std::vector<float> getrgb(int color) { 
 //     std::vector<float> rgbcolor(3, 0);
 //     std::cout << color << " ";
@@ -194,9 +207,9 @@ std::vector<float> getrgb(int color) {
 //             break;
 //     }
 //     if (t == -1) {
-//         std::cout << "??";
-//         rgbcolor[0] = 0.24;
-//         std::cout << rgbcolor[0] << std::endl;
+//        // std::cout << "??";
+//        rgbcolor[0] = 0;
+//        // std::cout << rgbcolor[0] << std::endl;
 //     }
 //     for (auto i:rgbcolor) {
 //         std::cout << i << " ";
@@ -213,9 +226,11 @@ int recalc(std::vector<std::vector<Pixel>>& pixels, std::vector<Point>& points)
     std::vector<int> ns(points.size());
     for (int i = 0; i < HEIGHT; i++) {
         for (int j = 0; j < WIDTH; j++) {
-            sx[pixels[i][j].color] += pixels[i][j].x;
-            sy[pixels[i][j].color] += pixels[i][j].y;
-            ns[pixels[i][j].color]++;
+            if (pixels[i][j].color != -1) {
+                sx[pixels[i][j].color] += pixels[i][j].x;
+                sy[pixels[i][j].color] += pixels[i][j].y;
+                ns[pixels[i][j].color]++;
+            }
         }
     }
     for (int i = 0; i < points.size(); i++) {
