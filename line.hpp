@@ -8,5 +8,6 @@ class Line
         Point first;
         Point second;
         Line();
-        Line(Point, Point);
+        Line(Point&, Point&);
+        Line(Pixel&, Point&);
 };
