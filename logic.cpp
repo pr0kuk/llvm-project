@@ -6,8 +6,7 @@ void print_time(char* const str, unsigned int start) {
     std::cout << str << " " << clock() - start << std::endl;
 }
 
-int dist(Point& a, CenterPoint& b)
-{
+int dist(Point& a, CenterPoint& b) {
     return (b.x-a.x)*(b.x-a.x)+(b.y-a.y)*(b.y-a.y);
 }
 
