@@ -1,23 +1,19 @@
 #include "libs.hpp"
 //#include <C:/Users/alex-/gcc/include/GL/freeglut.h>
-//#include <GL/gl.h>
 #include <GL/freeglut.h>
 #include "point.hpp"
-#include "line.hpp"
-#include "vordiag.hpp"
-#include "vorline.hpp"
-#include "pixel.hpp"
-int calculate(std::vector<std::vector<Pixel>>& pixels, std::vector<Point>& points);
-int recalc(std::vector<std::vector<Pixel>>& pixels, std::vector<Point>& points);
+//#include "pixel.hpp"
+int calc_new_centers(std::vector<std::vector<Point>>& pixels, std::vector<CenterPoint>& points);
+int calc_vor_diag(std::vector<std::vector<Point>>& pixels, std::vector<CenterPoint>& points);
 std::vector<float> getrgb(int color);
 
 static int flag_no_recalc = 0;
-static std::vector<Point> points(NUMBER_OF_POINTS);
-static std::vector<std::vector<Pixel>> pixels(HEIGHT, std::vector<Pixel>(WIDTH));
+static std::vector<CenterPoint> points(NUMBER_OF_POINTS);
+static std::vector<std::vector<Point>> pixels(HEIGHT, std::vector<Point>(WIDTH));
     
 void timf(int value) {
     if (flag_no_recalc == 0) {
-        int ret = recalc(pixels, points);
+        int ret = calc_new_centers(pixels, points);
         if (ret < NUMBER_OF_POINTS * 2)
             glutPostRedisplay();
         else
@@ -29,7 +25,7 @@ void timf(int value) {
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
-    calculate(pixels, points);
+    calc_vor_diag(pixels, points);
     unsigned int start = clock(), end = 0;
 
     glBegin(GL_POINTS);
