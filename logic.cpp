@@ -18,8 +18,7 @@ std::vector<float> getrgb(int color) {
     return rgbcolor;
 }
 
-int calc_new_centers(std::vector<std::vector<Point>>& pixels, std::vector<CenterPoint>& points)
-{
+int calc_new_centers(std::vector<std::vector<Point>>& pixels, std::vector<CenterPoint>& points) {
     unsigned int start = clock();
     int ret = 0, t = 0, sz = NUMBER_OF_POINTS;
     std::vector<int> sx(sz), sy(sz), ns(sz);
@@ -43,8 +42,7 @@ int calc_new_centers(std::vector<std::vector<Point>>& pixels, std::vector<Center
     return ret;
 }
 
-int calc_vor_diag(std::vector<std::vector<Point>>& pixels, std::vector<CenterPoint>& points)
-{
+int calc_vor_diag(std::vector<std::vector<Point>>& pixels, std::vector<CenterPoint>& points) {
     unsigned int start = clock();
     for (int i = 0; i < HEIGHT; i++)
         for (int j = 0, maxd = MAX_INT; j < WIDTH; j++, maxd = MAX_INT, pixels[i][j].x = j, pixels[i][j].y = i)
