@@ -13,8 +13,8 @@ int Point::set_cord(int a, int b) {
 
 Point::Point()
 {
-    x = -1;
-    y = -1;
+    x = 0;
+    y = 0;
 }
 
 Point::Point(int a, int b)
