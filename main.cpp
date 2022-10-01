@@ -5,6 +5,7 @@
 #include "vorline.hpp"
 #include<cstdlib>
 #include "pixel.hpp"
+static float const step = 3/(static_cast<float>(NUMBER_OF_POINTS));
 // bool operator == (Point a, Point b);
 // bool operator != (Point a, Point b);
 // int divide(Vordiag vect, Vordiag& l_vect, Vordiag& r_vect)
@@ -174,93 +175,50 @@ int dist(Pixel& a, Point& b)
 
 std::vector<float> getrgb(int color) {
     std::vector<float> rgbcolor(3, 0);
-    float step = 3/(static_cast<float>(NUMBER_OF_POINTS));
-    while (color > 0) {
+    for (; color > 0; color /= 3)
         rgbcolor[color%3] += step;
-        color/=3;
-    }
     return rgbcolor;
 }
 
-// std::vector<float> getrgb(int color) { 
-//     std::vector<float> rgbcolor(3, 0);
-//     std::cout << color << " ";
-//     int t =color;
-//     float step = 3/(static_cast<float>(NUMBER_OF_POINTS + 3 - NUMBER_OF_POINTS % 3));
-//     while (1) {
-//         rgbcolor[color%3] += step;
-//         color/=3;
-//         if (color <= 0)
-//             break;
-//     }
-//     if (t == -1) {
-//         std::cout << "??";
-//         rgbcolor[0] = 0.24;
-//         std::cout << rgbcolor[0] << std::endl;
-//     }
-//     for (auto i:rgbcolor) {
-//         std::cout << i << " ";
-//     }
-//     std::cout << std::endl;
-//     return rgbcolor;
-// }
+
 int recalc(std::vector<std::vector<Pixel>>& pixels, std::vector<Point>& points)
 {
     unsigned int start = clock(), end = 0;
-    int ret = 0, t = 0;
-    std::vector<int> sx(points.size());
-    std::vector<int> sy(points.size());
-    std::vector<int> ns(points.size());
-    for (int i = 0; i < HEIGHT; i++) {
-        for (int j = 0; j < WIDTH; j++) {
-            sx[pixels[i][j].color] += pixels[i][j].x;
-            sy[pixels[i][j].color] += pixels[i][j].y;
-            ns[pixels[i][j].color]++;
-        }
-    }
+    int ret = 0, t = 0, sz = NUMBER_OF_POINTS;
+    std::vector<int> sx(sz), sy(sz), ns(sz);
+    for (int i = 0; i < HEIGHT; i++)
+        for (int j = 0; j < WIDTH; j++)
+            if (pixels[i][j].color >= 0)
+                sx[pixels[i][j].color] += pixels[i][j].x, sy[pixels[i][j].color] += pixels[i][j].y, ns[pixels[i][j].color]++;
     for (int i = 0; i < points.size(); i++) {
         t = sx[i] / ns[i];
         if (points[i].x == t)
-            ret+=1;
+            ret += 1;
         else
             points[i].x = t;
         t = sy[i] / ns[i];
         if (points[i].y == t)
-            ret+=1;
+            ret += 1;
         else
             points[i].y = t;
     }
     end = clock();
     std::cout << "recalc " << end-start << std::endl;
-    std::cout << ret << std::endl;
     return ret;
 }
 int calculate(std::vector<std::vector<Pixel>>& pixels, std::vector<Point>& points)
 {
     unsigned int start = clock(), end = 0;
-    //std::cout << "start\n";
-    int d = 0, maxd = 1000000;
-    for (int i = 0; i < HEIGHT; i++) {
-        for (int j = 0; j < WIDTH; j++) {
-            maxd = 1000000;
+    for (int i = 0, d = 0; i < HEIGHT; i++) {
+        for (int j = 0, maxd = MAX_INT; j < WIDTH; j++, maxd = MAX_INT) {
             pixels[i][j].x = j, pixels[i][j].y = i;
-            for (int k = 0; k < NUMBER_OF_POINTS; k++) {
-                d = dist(pixels[i][j], points[k]);
-                if (d < maxd) {
-                    maxd = d;
-                    pixels[i][j].color = k;
-                    if (maxd == 0) {
-                        pixels[i][j].color = COLOR_OF_POINT;
-                        break;
-                    }
-                }
-            }
+            for (int k = 0, d = dist(pixels[i][j], points[0]); k < NUMBER_OF_POINTS && maxd > 0; k++, d = dist(pixels[i][j], points[k]))
+                if (d < maxd)
+                    maxd = d, pixels[i][j].color = k;
         }
     }
-        end = clock();
-  std::cout << "main " << end-start << std::endl;
-    //std::cout << "end\n";
-    // std::cout << "Hi\n";
+    end = clock();
+    std::cout << "main " << end-start << std::endl;
 
 
 
