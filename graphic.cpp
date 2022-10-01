@@ -9,18 +9,6 @@ std::vector<float> getrgb(int color);
 static int flag_no_recalc = 0;
 static std::vector<CenterPoint> points(NUMBER_OF_POINTS);
 static std::vector<std::vector<Point>> pixels(HEIGHT, std::vector<Point>(WIDTH));
-    
-void timf(int value) {
-    if (flag_no_recalc == 0) {
-        int ret = calc_new_centers(pixels, points);
-        if (ret < NUMBER_OF_POINTS * 2)
-            glutPostRedisplay();
-        else
-            flag_no_recalc = 1;
-    }
-    std::cout << "flag " << flag_no_recalc << std::endl;
-    glutTimerFunc(FRAME_TIME, timf, 0); // Setup next timer
-}
 
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
@@ -42,17 +30,46 @@ void display() {
     std::cout << "graphic " << end-start << std::endl;
 }
 
-int main(int argc, char** argv) {
-    for (auto i = points.begin(); i < points.end(); i++)
-            i->x = rand() % WIDTH, i->y = rand() % HEIGHT;
-    for (auto i : points)
-        std::cout << i.x << std::endl;
+void timf(int value) {
+    if (flag_no_recalc == 0) {
+        int ret = calc_new_centers(pixels, points);
+        if (ret < NUMBER_OF_POINTS * 2)
+            display();
+        else {
+            std::cout << "END" << std::endl;
+            flag_no_recalc = 1;
+        }
+    }
+    glutTimerFunc(FRAME_TIME, timf, 0); // Setup next timer
+}
+
+int graphic_init(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     glutInitWindowPosition(1000, 90);
     glutInitWindowSize(WIDTH, HEIGHT);
     glutCreateWindow("Lloyd");
+    return 0;
+}
+
+int glutloop() {
     glutDisplayFunc(display);
     glutTimerFunc(FRAME_TIME, timf, 0); // Set up timer for 40ms, about 25 fps
     glutMainLoop();
+    return 0;
+}
+
+int logicloop() {
+    display();
+    while (1)
+        timf(FRAME_TIME);
+    return 0;
+}
+
+int main(int argc, char** argv) {
+    for (auto i = points.begin(); i < points.end(); i++)
+            i->x = rand() % WIDTH, i->y = rand() % HEIGHT;
+    graphic_init(argc, argv);
+    glutloop();
+    return 0;
 }
