@@ -7,6 +7,7 @@
 #define FRAME_TIME 40
 #include <iostream>
 #include <vector>
+#include <cstdlib>
 #include <utility>
 #include <math.h>
 #include <set>
