@@ -2,6 +2,10 @@
 #include "point.hpp"
 //static float const step = 3/(static_cast<float>(NUMBER_OF_POINTS));
 
+void print_time(char* const str, unsigned int start) {
+    std::cout << str << " " << clock() - start << std::endl;
+}
+
 int dist(Point& a, CenterPoint& b)
 {
     return (b.x-a.x)*(b.x-a.x)+(b.y-a.y)*(b.y-a.y);
@@ -17,7 +21,7 @@ std::vector<float> getrgb(int color) {
 
 int calc_new_centers(std::vector<std::vector<Point>>& pixels, std::vector<CenterPoint>& points)
 {
-    unsigned int start = clock(), end = 0;
+    unsigned int start = clock();
     int ret = 0, t = 0, sz = NUMBER_OF_POINTS;
     std::vector<int> sx(sz), sy(sz), ns(sz);
     for (auto i : pixels)
@@ -36,20 +40,18 @@ int calc_new_centers(std::vector<std::vector<Point>>& pixels, std::vector<Center
         else
             points[i].y = t;
     }
-    end = clock();
-    std::cout << "recalc " << end-start << std::endl;
+    print_time("new_centers", start);
     return ret;
 }
 
 int calc_vor_diag(std::vector<std::vector<Point>>& pixels, std::vector<CenterPoint>& points)
 {
-    unsigned int start = clock(), end = 0;
+    unsigned int start = clock();
     for (int i = 0; i < HEIGHT; i++)
         for (int j = 0, maxd = MAX_INT; j < WIDTH; j++, maxd = MAX_INT, pixels[i][j].x = j, pixels[i][j].y = i)
             for (int k = 0, d = 0; k < NUMBER_OF_POINTS && maxd > 0; k++)
                 if ((d = dist(pixels[i][j], points[k])) < maxd)
                     maxd = d, pixels[i][j].color = k;
-    end = clock();
-    std::cout << "main " << end-start << std::endl;
+    print_time("vordiag", start);
     return 0;
 }

@@ -4,6 +4,7 @@
 #include "point.hpp"
 int calc_new_centers(std::vector<std::vector<Point>>& pixels, std::vector<CenterPoint>& points);
 int calc_vor_diag(std::vector<std::vector<Point>>& pixels, std::vector<CenterPoint>& points);
+void print_time(char* const str, unsigned int start);
 std::vector<float> getrgb(int color);
 
 static int flag_no_recalc = 0;
@@ -13,7 +14,7 @@ static std::vector<std::vector<Point>> pixels(HEIGHT, std::vector<Point>(WIDTH))
 void display() {
     glClear(GL_COLOR_BUFFER_BIT);
     calc_vor_diag(pixels, points);
-    unsigned int start = clock(), end = 0;
+    unsigned int start = clock();
 
     glBegin(GL_POINTS);
     for (auto i : pixels) {
@@ -26,8 +27,7 @@ void display() {
     glEnd();
 
     glFlush();
-    end = clock();
-    std::cout << "graphic " << end-start << std::endl;
+    print_time("graphic", start);
 }
 
 void timf(int value) {
