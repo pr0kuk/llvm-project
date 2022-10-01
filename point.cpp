@@ -5,20 +5,16 @@ std::pair<int, int> Point::get_cord() {
     return std::make_pair(x, y);
 }
 
-int Point::set_cord(int a, int b) {
-    x = a;
-    y = b;
-    return 0;
+void Point::set_cord(int a, int b) {
+    x = a, y = b;
 }
 
 Point::Point() {
-    x = 0;
-    y = 0;
+    x = 0, y = 0;
 }
 
 Point::Point(int a, int b) {
-    x = a;
-    y = b;
+    x = a, y = b;
 }
 
 bool operator == (Point a, Point b) {

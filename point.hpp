@@ -7,7 +7,7 @@ class Point
         int x = -1;
         int y = -1;
         std::pair<int, int> get_cord();
-        int set_cord(int , int);
+        void set_cord(int , int);
         Point();
         Point(int, int);
 };
