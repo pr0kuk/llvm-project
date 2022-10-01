@@ -11,24 +11,20 @@ int Point::set_cord(int a, int b) {
     return 0;
 }
 
-Point::Point()
-{
+Point::Point() {
     x = 0;
     y = 0;
 }
 
-Point::Point(int a, int b)
-{
+Point::Point(int a, int b) {
     x = a;
     y = b;
 }
 
-bool operator == (Point a, Point b)
-{
+bool operator == (Point a, Point b) {
     return (a.x == b.x && a.y == b.y);
 }
 
-bool operator != (Point a, Point b)
-{
+bool operator != (Point a, Point b) {
     return (a.x != b.x || a.y != b.y);
 }
