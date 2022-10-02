@@ -1,5 +1,10 @@
 #include "libs.hpp"
 #include "point.hpp"
+#define KEY_ESC 27
+#define KEY_SPACE 32
+#define KEY_R 'r'
+static int show_window = 1;
+static int pause_window = 0;
 static int flag_no_recalc = 0;
 static std::vector<CenterPoint> points(NUMBER_OF_POINTS);
 static std::vector<std::vector<Point>> pixels(HEIGHT, std::vector<Point>(WIDTH));
@@ -10,9 +15,10 @@ void gl_put_pixel(Point& j, std::vector<float> rgbcolor);
 void gl_flush();
 void set_timer(int value);
 int  loop();
+void exit_loop();
 
 void print_time(char* const str, unsigned int start) {
-    std::cout << str << " " << clock() - start << std::endl;
+    //std::cout << str << " " << clock() - start << std::endl;
 }
 
 int dist(Point& a, CenterPoint& b) {
@@ -74,23 +80,43 @@ void display() {
 }
 
 void timf(int value) {
-    if (flag_no_recalc == 0) {
+    if (flag_no_recalc == 0 && pause_window == 0) {
         int ret = calc_new_centers(pixels, points);
         if (ret < NUMBER_OF_POINTS * 2)
             display();
         else {
-            std::cout << "END" << std::endl;
+            std::cout << "Converged" << std::endl;
             flag_no_recalc = 1;
         }
     }
     set_timer(value);
 }
 
-
-int main(int argc, char** argv) {
+void reset_picture() {
     for (auto i = points.begin(); i < points.end(); i++)
             i->x = rand() % WIDTH, i->y = rand() % HEIGHT;
+    calc_vor_diag(pixels, points);
+    flag_no_recalc = 0;
+}
+
+void releaseKey(unsigned char key, int x, int y) {
+    //std::cout << "KEY " << static_cast<int>(key) << std::endl;
+    switch(key) {
+        case KEY_ESC:
+            std::cout << "Exit" << std::endl;
+            exit_loop(); break;
+        case KEY_SPACE:
+            std::cout << "Paused" << std::endl;
+            pause_window ^= 1; break;
+        case KEY_R:
+            std::cout << "Reset\n";
+            reset_picture(); break;
+    }
+}
+
+int main(int argc, char** argv) {
     gl_init(argc, argv);
+    reset_picture();
     loop();
     return 0;
 }

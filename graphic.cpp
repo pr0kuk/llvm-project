@@ -2,7 +2,8 @@
 #include <C:/Users/alex-/gcc/include/GL/freeglut.h>
 //#include <GL/freeglut.h>
 #include "point.hpp"
-
+void releaseKey(unsigned char key, int x, int y);
+void reset_picture();
 void gl_start() {
     glClear(GL_COLOR_BUFFER_BIT);
     glBegin(GL_POINTS);
@@ -24,5 +25,7 @@ int  gl_init(int argc, char** argv) {
     glutInitWindowPosition(1000, 90);
     glutInitWindowSize(WIDTH, HEIGHT);
     glutCreateWindow("Lloyd");
+    glutIgnoreKeyRepeat(1);
+	glutKeyboardFunc(releaseKey);
     return 0;
 }
