@@ -1,4 +1,4 @@
-#include "libs.hpp"
+#include "libs.h"
 static int show_window = 1;
 void display();
 void timf(int value);

@@ -1,5 +1,5 @@
-#include "libs.hpp"
-#include "point.hpp"
+#include "libs.h"
+#include "point.h"
 #include <stdlib.h>
 #define KEY_ESC 27
 #define KEY_SPACE 32
@@ -7,18 +7,18 @@
 static int show_window = 1;
 static int pause_window = 0;
 static int flag_no_recalc = 0;
-static Point points[NUMBER_OF_POINTS];
-static Point pixels[HEIGHT][WIDTH];
-static float const step = 3/(static_cast<float>(NUMBER_OF_POINTS));
+static struct Point points[NUMBER_OF_POINTS];
+static struct Point pixels[HEIGHT][WIDTH];
+static float const step = 3/((float)(NUMBER_OF_POINTS));
 int  gl_init(int argc, char** argv);
 void gl_start();
-void gl_put_pixel(Point* j);
+void gl_put_pixel(struct Point* j);
 void gl_flush();
 void set_timer(int value);
 int  loop();
 void exit_loop();
 
-int dist(Point* a, Point* b) {
+int dist(struct Point* a, struct Point* b) {
     return (b->x-a->x)*(b->x-a->x)+(b->y-a->y)*(b->y-a->y);
 }
 
@@ -27,7 +27,7 @@ void getrgb(int color, float* rgbcolor) {
         rgbcolor[color%3] += step;
 }
 
-int calc_new_centers(Point pixels[HEIGHT][WIDTH], Point* points) {
+int calc_new_centers(struct Point pixels[HEIGHT][WIDTH], struct Point* points) {
     int ret = 0, t = 0;
     int sx[NUMBER_OF_POINTS], sy[NUMBER_OF_POINTS], ns[NUMBER_OF_POINTS]; 
     for (int i = 0; i < NUMBER_OF_POINTS; i++)
@@ -51,7 +51,7 @@ int calc_new_centers(Point pixels[HEIGHT][WIDTH], Point* points) {
     return ret;
 }
 
-int calc_vor_diag(Point pixels[HEIGHT][WIDTH], Point* points) {
+int calc_vor_diag(struct Point pixels[HEIGHT][WIDTH], struct Point* points) {
     for (int i = 0; i < HEIGHT; i++)
         for (int j = 0, maxd = MAX_INT; j < WIDTH; pixels[i][j].x = j, pixels[i][j].y = i, j++, maxd = MAX_INT)
             for (int k = 0, d = 0; k < NUMBER_OF_POINTS && maxd > 0; k++)
