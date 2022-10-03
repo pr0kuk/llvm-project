@@ -1,6 +1,6 @@
-#include <C:/Users/alex-/gcc/include/GL/freeglut.h>
 #include "libs.hpp"
-
+#include <C:/Users/alex-/gcc/include/GL/freeglut.h>
+//#include <GL/freeglut.h>
 void display();
 void timf(int value);
 
