@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 3.16)
 project(llvm-project)
 option(glut "GLUT or LOG loop" 1)
-set(CMAKE_CXX_COMPILER gcc)
+
 if (WIN32)
+    set(CMAKE_C_COMPILER gcc)
     link_directories(C:/Users/alex-/gcc/lib)
 elseif (UNIX)
-    set(CMAKE_CXX_FLAGS "-std=c++11")
+    set(CMAKE_C_COMPILER clang)
 endif()
+
 set(EXECUTABLE_OUTPUT_PATH build)
 set(LIBRARY_OUTPUT_PATH build)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
