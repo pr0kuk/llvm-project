@@ -4,7 +4,7 @@
 * CMAKE 3.16.3 *or newer*
 * CLANG 10.0.0 *or newer*
 * LLVM 10.0.0 *or newer*
-* FREEGLUTD 3.0.0 *or newer*
+* FREEGLUT 3.0.0 *or newer*
 * OPENGL 3.0 *or newer*
 # Description
 ## Algorithm Description
@@ -14,8 +14,7 @@ A canvas of points with the size `HEIGHT x WIDTH` is initialized. Then the coord
 `graphic.cpp` - OpenGL (freeglut) functions  
 `logloop.cpp` - general loop based on while()  
 `glutloop.cpp` - general loop based on glutMainLoop()  
-`point.cpp` - methods of Point class  
-`point.hpp` - description of Point class  
+`point.hpp` - description of Point structure 
 `libs.hpp` - list of includes and defines
 # Build
 ## Unix
