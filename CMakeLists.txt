@@ -14,9 +14,9 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 if (NOT glut)
-    add_executable(launcher graphic.cpp logic.cpp point.cpp logloop.cpp)
+    add_executable(launcher graphic.cpp logic.cpp logloop.cpp)
 else ()
-    add_executable(launcher graphic.cpp logic.cpp point.cpp glutloop.cpp)
+    add_executable(launcher graphic.cpp logic.cpp glutloop.cpp)
 endif()
 
 if (WIN32)

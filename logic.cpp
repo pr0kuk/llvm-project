@@ -6,9 +6,8 @@
 static int show_window = 1;
 static int pause_window = 0;
 static int flag_no_recalc = 0;
-static std::vector<CenterPoint> points(NUMBER_OF_POINTS);
+static std::vector<Point> points(NUMBER_OF_POINTS);
 static std::vector<std::vector<Point>> pixels(HEIGHT, std::vector<Point>(WIDTH));
-//static float const step = 3/(static_cast<float>(NUMBER_OF_POINTS));
 int  gl_init(int argc, char** argv);
 void gl_start();
 void gl_put_pixel(Point& j, std::vector<float> rgbcolor);
@@ -17,11 +16,7 @@ void set_timer(int value);
 int  loop();
 void exit_loop();
 
-void print_time(char* const str, unsigned int start) {
-    //std::cout << str << " " << clock() - start << std::endl;
-}
-
-int dist(Point& a, CenterPoint& b) {
+int dist(Point& a, Point& b) {
     return (b.x-a.x)*(b.x-a.x)+(b.y-a.y)*(b.y-a.y);
 }
 
@@ -33,8 +28,7 @@ std::vector<float> getrgb(int color) {
     return rgbcolor;
 }
 
-int calc_new_centers(std::vector<std::vector<Point>>& pixels, std::vector<CenterPoint>& points) {
-    unsigned int start = clock();
+int calc_new_centers(std::vector<std::vector<Point>>& pixels, std::vector<Point>& points) {
     int ret = 0, t = 0, sz = NUMBER_OF_POINTS;
     std::vector<int> sx(sz), sy(sz), ns(sz);
     for (auto i : pixels)
@@ -53,41 +47,33 @@ int calc_new_centers(std::vector<std::vector<Point>>& pixels, std::vector<Center
         else
             points[i].y = t;
     }
-    print_time("new_centers", start);
     return ret;
 }
 
-int calc_vor_diag(std::vector<std::vector<Point>>& pixels, std::vector<CenterPoint>& points) {
-    unsigned int start = clock();
+int calc_vor_diag(std::vector<std::vector<Point>>& pixels, std::vector<Point>& points) {
     for (int i = 0; i < HEIGHT; i++)
-        for (int j = 0, maxd = MAX_INT; j < WIDTH; j++, maxd = MAX_INT, pixels[i][j].x = j, pixels[i][j].y = i)
+        for (int j = 0, maxd = MAX_INT; j < WIDTH; maxd = MAX_INT, pixels[i][j].x = j, pixels[i][j].y = i, j++)
             for (int k = 0, d = 0; k < NUMBER_OF_POINTS && maxd > 0; k++)
                 if ((d = dist(pixels[i][j], points[k])) < maxd)
                     maxd = d, pixels[i][j].color = k;
-    print_time("vordiag", start);
     return 0;
 }
 
 void display() {
     calc_vor_diag(pixels, points);
-    unsigned int start = clock();
     gl_start();
     for (auto i : pixels)
         for (auto j : i)
             gl_put_pixel(j, getrgb(j.color));
     gl_flush();
-    print_time("graphic", start);
 }
 
 void timf(int value) {
     if (flag_no_recalc == 0 && pause_window == 0) {
-        int ret = calc_new_centers(pixels, points);
-        if (ret < NUMBER_OF_POINTS * 2)
+        if (calc_new_centers(pixels, points) < NUMBER_OF_POINTS * 2)
             display();
-        else {
-            std::cout << "Converged" << std::endl;
+        else
             flag_no_recalc = 1;
-        }
     }
     set_timer(value);
 }
@@ -100,16 +86,12 @@ void reset_picture() {
 }
 
 void releaseKey(unsigned char key, int x, int y) {
-    //std::cout << "KEY " << static_cast<int>(key) << std::endl;
     switch(key) {
         case KEY_ESC:
-            std::cout << "Exit" << std::endl;
             exit_loop(); break;
         case KEY_SPACE:
-            std::cout << "Paused" << std::endl;
             pause_window ^= 1; break;
         case KEY_R:
-            std::cout << "Reset\n";
             reset_picture(); break;
     }
 }

@@ -14,7 +14,6 @@ A canvas of points with the size `HEIGHT x WIDTH` is initialized. Then the coord
 `graphic.cpp` - OpenGL (freeglut) functions  
 `logloop.cpp` - general loop based on while()  
 `glutloop.cpp` - general loop based on glutMainLoop()  
-`point.cpp` - methods of Point class  
 `point.hpp` - description of Point class  
 `libs.hpp` - list of includes and defines
 # Build
@@ -27,7 +26,7 @@ A canvas of points with the size `HEIGHT x WIDTH` is initialized. Then the coord
 ### Remark
 Sometimes for Windows it is better to compile manually by:
 
-    g++ logic.cpp graphic.cpp point.cpp logloop.cpp -o build/launcher.exe -lfreeglutd -lopengl32
+    g++ logic.cpp graphic.cpp logloop.cpp -o build/launcher.exe -lfreeglutd -lopengl32
 ## CMake options
 `glut` = 1 - using glutloop.cpp *(default value)* 
 `glut` = 0 - using logloop.cpp  

@@ -7,5 +7,3 @@
 #define FRAME_TIME 40
 #include <iostream>
 #include <vector>
-#include <utility>
-#include <ctime>
