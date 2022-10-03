@@ -10,12 +10,12 @@
 ## Algorithm Description
 A canvas of points with the size `HEIGHT x WIDTH` is initialized. Then the coordinates of the `NUMBER_OF_POINTS` points - centers of Voronoi cells are randomly generated. After that, a Voronoi diagram is constructed for each frame and the Voronoi centers are shifted to the mass centers of its cells. After some time, the diagrams converge and the rendering of new frames is suspended.
 ## Files Description
-`logic.cpp` - main() and logic functions  
-`graphic.cpp` - OpenGL (freeglut) functions  
-`logloop.cpp` - general loop based on while()  
-`glutloop.cpp` - general loop based on glutMainLoop()  
-`point.hpp` - description of Point structure 
-`libs.hpp` - list of includes and defines
+`logic.c` - main() and logic functions  
+`graphic.c` - OpenGL (freeglut) functions  
+`logloop.c` - general loop based on while()  
+`glutloop.c` - general loop based on glutMainLoop()  
+`point.h` - description of Point structure 
+`libs.h` - list of includes and defines
 # Build
 ## Unix
     cmake ./
@@ -23,12 +23,9 @@ A canvas of points with the size `HEIGHT x WIDTH` is initialized. Then the coord
 ## Windows
     cmake .
     cmake --build .
-### Remark
-Sometimes for Windows it is better to compile manually by:
 
-    g++ logic.cpp graphic.cpp point.cpp logloop.cpp -o build/launcher.exe -lfreeglutd -lopengl32
 ## CMake options
-`glut` = 1 - using glutloop.cpp *(default value)* 
+`glut` = 1 - using glutloop.cpp *(default value)*  
 `glut` = 0 - using logloop.cpp  
 
 example:  
