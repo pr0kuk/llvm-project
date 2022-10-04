@@ -3,11 +3,10 @@ static int show_window = 1;
 void display();
 void timf(int value);
 
-int loop() {
+void loop() {
     display();
     while (show_window == 1)
         timf(FRAME_TIME);
-    return 0;
 }
 
 void exit_loop() {

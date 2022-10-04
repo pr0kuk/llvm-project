@@ -1,13 +1,20 @@
 #include "libs.h"
-#include <C:/Users/alex-/gcc/include/GL/freeglut.h>
-//#include <GL/freeglut.h>
 #include "point.h"
-void getrgb(int color, float* rgbcolor);
+#include <C:/Users/alex-/gcc/include/GL/freeglut.h>
+//#include <GL/freeglut.h> 
+#include <stdlib.h>
+static float const step = 3/((float)(NUMBER_OF_POINTS));
 void releaseKey(unsigned char key, int x, int y);
 void reset_picture();
+
 void gl_start() {
     glClear(GL_COLOR_BUFFER_BIT);
     glBegin(GL_POINTS);
+}
+
+void getrgb(int color, float* rgbcolor) {
+    for (; color > 0; color /= 3)
+        rgbcolor[color%3] += step;
 }
 
 void gl_put_pixel(struct Point* j) {
@@ -22,7 +29,7 @@ void gl_flush() {
     glFlush();
 }
 
-int  gl_init(int argc, char** argv) {
+void gl_init(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     glutInitWindowPosition(1000, 90);
@@ -30,5 +37,8 @@ int  gl_init(int argc, char** argv) {
     glutCreateWindow("Lloyd");
     glutIgnoreKeyRepeat(1);
 	glutKeyboardFunc(releaseKey);
-    return 0;
+}
+
+int int_rand() {
+    return rand();
 }
