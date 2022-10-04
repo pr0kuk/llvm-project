@@ -6,7 +6,6 @@ static int flag_no_recalc = 0;
 static struct Point points[NUMBER_OF_POINTS];
 static struct Point pixels[HEIGHT][WIDTH];
 
-
 int dist(struct Point* a, struct Point* b) {
     return (b->x-a->x)*(b->x-a->x)+(b->y-a->y)*(b->y-a->y);
 }
