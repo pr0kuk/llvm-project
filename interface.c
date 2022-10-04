@@ -36,7 +36,7 @@ void gl_init(int argc, char** argv) {
     glutInitWindowSize(WIDTH, HEIGHT);
     glutCreateWindow("Lloyd");
     glutIgnoreKeyRepeat(1);
-	glutKeyboardFunc(releaseKey);
+    glutKeyboardFunc(releaseKey);
 }
 
 int int_rand() {
