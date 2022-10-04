@@ -1,11 +1,12 @@
 #include "libs.h"
-#include "point.h"
-#include <C:/Users/alex-/gcc/include/GL/freeglut.h>
-//#include <GL/freeglut.h> 
+#ifdef _WIN32
+    #include <C:/Users/alex-/gcc/include/GL/freeglut.h>
+#else
+    #include <GL/freeglut.h>
+#endif
 #include <stdlib.h>
+
 static float const step = 3/((float)(NUMBER_OF_POINTS));
-void releaseKey(unsigned char key, int x, int y);
-void reset_picture();
 
 void gl_start() {
     glClear(GL_COLOR_BUFFER_BIT);

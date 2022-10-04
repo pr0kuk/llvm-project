@@ -1,6 +1,11 @@
 #include "libs.h"
-#include <C:/Users/alex-/gcc/include/GL/freeglut.h>
-//#include <GL/freeglut.h>
+
+#ifdef _WIN32
+    #include <C:/Users/alex-/gcc/include/GL/freeglut.h>
+#else
+    #include <GL/freeglut.h>
+#endif
+
 void display();
 void timf(int value);
 

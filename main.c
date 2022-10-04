@@ -1,21 +1,11 @@
 #include "libs.h"
-#include "point.h"
-#define KEY_ESC 27
-#define KEY_SPACE 32
-#define KEY_R 'r'
+
 static int show_window = 1;
 static int pause_window = 0;
 static int flag_no_recalc = 0;
 static struct Point points[NUMBER_OF_POINTS];
 static struct Point pixels[HEIGHT][WIDTH];
-void gl_init(int argc, char** argv);
-void gl_start();
-void gl_put_pixel(struct Point* j);
-void gl_flush();
-void set_timer(int value);
-void loop();
-void exit_loop();
-int int_rand();
+
 
 int dist(struct Point* a, struct Point* b) {
     return (b->x-a->x)*(b->x-a->x)+(b->y-a->y)*(b->y-a->y);
