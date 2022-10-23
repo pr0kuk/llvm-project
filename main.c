@@ -1,7 +1,6 @@
 #include "libs.h"
 
 static int show_window = 1;
-static int pause_window = 0;
 static int flag_no_recalc = 0;
 static struct Point points[NUMBER_OF_POINTS];
 static struct Point pixels[HEIGHT][WIDTH];
@@ -52,7 +51,7 @@ void display() {
 }
 
 void timf(int value) {
-    if (flag_no_recalc == 0 && pause_window == 0) {
+    if (flag_no_recalc == 0 /*&& pause_window == 0*/) {
         if (calc_new_centers(pixels, points) < NUMBER_OF_POINTS * 2)
             display();
         else 
@@ -68,16 +67,7 @@ void reset_picture() {
     flag_no_recalc = 0;
 }
 
-void releaseKey(unsigned char key, int x, int y) {
-    switch(key) {
-        case KEY_ESC:
-            exit_loop(); break;
-        case KEY_SPACE:
-            pause_window ^= 1; break;
-        case KEY_R:
-            reset_picture(); break;
-    }
-}
+
 
 int main(int argc, char** argv) {
     gl_init(argc, argv);
