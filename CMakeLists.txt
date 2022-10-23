@@ -16,10 +16,10 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 if (NOT glut)
     message(Used logloop.cpp)
-    add_executable(launcher logic.c graphic.c logloop.c)
+    add_executable(launcher main.c interface.c logloop.c)
 else ()
     message(Used glutloop.cpp)
-    add_executable(launcher logic.c graphic.c glutloop.c)
+    add_executable(launcher main.c interface.c glutloop.c)
 endif()
 
 if (WIN32)
