@@ -800,11 +800,38 @@ void calc_new_centers_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) 
 //   %125 = icmp eq i32 %123, %124
 //   br i1 %125, label %126, label %129
 
+
+    builder->SetInsertPoint(id2bb[109]);
+    id2value[110] = builder->CreateLoad(builder->getInt32Ty(), id2value[9]);
+    id2value[111] = builder->CreateSExt(id2value[110], builder->getInt64Ty());
+    id2value[112] = builder->CreateInBoundsGEP(ar10, id2value[3], {llvm::ConstantInt::get(builder->getInt64Ty(), 0) , id2value[111]});
+    id2value[113] = builder->CreateLoad(builder->getInt32Ty(), id2value[112]);
+    id2value[114] = builder->CreateLoad(builder->getInt32Ty(), id2value[9]);
+    id2value[115] = builder->CreateSExt(id2value[114], builder->getInt64Ty());
+    id2value[116] = builder->CreateInBoundsGEP(ar10, id2value[5], {llvm::ConstantInt::get(builder->getInt32Ty(),0), id2value[115]});
+    id2value[117] = builder->CreateLoad(builder->getInt32Ty(), id2value[41]);
+    id2value[118] = builder->CreateSDiv(id2value[113], id2value[117]);
+    builder->CreateStore(id2value[118], id2value[2]);
+    id2value[119] = builder->CreateLoad(builder->getInt32Ty(), id2value[9]);
+    id2value[120] = builder->CreateSExt(id2value[119], builder->getInt64Ty());
+    //id2value[121] = builder->CreateInBoundsGEP(points->getValueType(), points, {llvm::ConstantInt::get(builder->getInt64Ty(), 0) , id2value[120]});
+    //id2value[122] = builder->CreateInBoundsGEP(Point, id2value[121], {llvm::ConstantInt::get(builder->getInt32Ty(), 0) , llvm::ConstantInt::get(builder->getInt32Ty(), 1)});
+    id2value[123] = builder->CreateLoad(builder->getInt32Ty(), id2value[122]);
+    id2value[124] = builder->CreateLoad(builder->getInt32Ty(), id2value[2]);
+    id2value[125] = builder->CreateICmpEQ(id2value[123], id2value[124]);
+    builder->CreateCondBr(id2value[125], id2bb[126], id2bb[129]);
+
 // 126:                                              ; preds = %109
 //   %127 = load i32, i32* %1, align 4
 //   %128 = add nsw i32 %127, 1
 //   store i32 %128, i32* %1, align 4
 //   br label %135
+
+    builder->SetInsertPoint(id2bb[126]);
+    id2value[127] = builder->CreateLoad(builder->getInt32Ty(), id2value[1]);
+    id2value[128] = builder->CreateNSWAdd(id2value[127], llvm::ConstantInt::get(builder->getInt64Ty(), 1));
+    builder->CreateStore(id2value[128], id2value[1]);
+    builder->CreateBr(id2bb[135]);
 
 // 129:                                              ; preds = %109
 //   %130 = load i32, i32* %2, align 4
@@ -814,6 +841,17 @@ void calc_new_centers_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) 
 //   %134 = getelementptr inbounds %struct.Point, %struct.Point* %133, i32 0, i32 1
 //   store i32 %130, i32* %134, align 4
 //   br label %135
+
+    builder->SetInsertPoint(id2bb[129]);
+    id2value[130] = builder->CreateLoad(builder->getInt32Ty(), id2value[2]);
+    id2value[131] = builder->CreateLoad(builder->getInt32Ty(), id2value[9]);
+    id2value[132] = builder->CreateSExt(id2value[131], builder->getInt64Ty());
+    //id2value[133] = builder->CreateInBoundsGEP(points->getValueType(), points, {llvm::ConstantInt::get(builder->getInt64Ty(), 0) , id2value[132]});
+    //id2value[134] = builder->CreateInBoundsGEP(Point, id2value[133], {llvm::ConstantInt::get(builder->getInt32Ty(), 0) , llvm::ConstantInt::get(builder->getInt32Ty(), 1)});
+    builder->CreateStore(id2value[130], id2value[134]);
+    builder->CreateBr(id2bb[135]);
+
+  
 
 // 135:                                              ; preds = %129, %126
 //   %136 = load i32, i32* %9, align 4
