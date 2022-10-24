@@ -9,3 +9,4 @@ CMakeCache.txt
 *.sln
 *.exe
 *.out
+Makefile
