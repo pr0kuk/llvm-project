@@ -1,3 +1,3 @@
 make
-build/codegen > result.ll
-clang result.ll -o kek interface.c -lglut -lGL
+build/codegen > build/result.ll
+clang build/result.ll -o build/ir_check.out interface.c -lglut -lGL 

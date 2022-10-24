@@ -9,7 +9,7 @@ int dist(struct Point* a, struct Point* b) {
     return (b->x-a->x)*(b->x-a->x)+(b->y-a->y)*(b->y-a->y);
 }
 
-int calc_new_centers(struct Point pixels[HEIGHT][WIDTH], struct Point* points) {
+int calc_new_centers() {
     int ret = 0, t = 0;
     int sx[NUMBER_OF_POINTS], sy[NUMBER_OF_POINTS], ns[NUMBER_OF_POINTS]; 
     for (int i = 0; i < NUMBER_OF_POINTS; i++)
@@ -33,7 +33,7 @@ int calc_new_centers(struct Point pixels[HEIGHT][WIDTH], struct Point* points) {
     return ret;
 }
 
-void calc_vor_diag(struct Point pixels[HEIGHT][WIDTH], struct Point* points) {
+void calc_vor_diag() {
     for (int i = 0; i < HEIGHT; i++)
         for (int j = 0, maxd = MAX_INT; j < WIDTH; pixels[i][j].x = j, pixels[i][j].y = i, j++, maxd = MAX_INT)
             for (int k = 0, d = 0; k < NUMBER_OF_POINTS && maxd > 0; k++)
@@ -42,7 +42,7 @@ void calc_vor_diag(struct Point pixels[HEIGHT][WIDTH], struct Point* points) {
 }
 
 void display() {
-    calc_vor_diag(pixels, points);
+    calc_vor_diag();
     gl_start();
     for (int i = 0; i < HEIGHT; i++)
         for (int j = 0; j < WIDTH; j++)
@@ -52,7 +52,7 @@ void display() {
 
 void timf(int value) {
     if (flag_no_recalc == 0 /*&& pause_window == 0*/) {
-        if (calc_new_centers(pixels, points) < NUMBER_OF_POINTS * 2)
+        if (calc_new_centers() < NUMBER_OF_POINTS * 2)
             display();
         else 
             flag_no_recalc = 1;
@@ -63,11 +63,9 @@ void timf(int value) {
 void reset_picture() {
     for (int i = 0; i < NUMBER_OF_POINTS; i++)
         points[i].x = int_rand() % WIDTH, points[i].y = int_rand() % HEIGHT;
-    calc_vor_diag(pixels, points);
+    calc_vor_diag();
     flag_no_recalc = 0;
 }
-
-
 
 int main(int argc, char** argv) {
     gl_init(argc, argv);
