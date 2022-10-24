@@ -698,6 +698,114 @@ void reset_picture_codegen(llvm::Module* module, llvm::IRBuilder<>* builder)  {
     builder->CreateRetVoid();
 }
 
+void dist_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
+
+    std::unordered_map<int, llvm::BasicBlock*> id2bb;
+    std::unordered_map<int, llvm::Value*> id2value;
+    llvm::StructType* Point = llvm::StructType::get(builder->getInt32Ty(), builder->getInt32Ty(),builder->getInt32Ty());
+
+    auto&& distFunc = module->getFunction("dist");
+    llvm::BasicBlock *entry = llvm::BasicBlock::Create(module->getContext(), "entrypoint", distFunc);
+    builder->SetInsertPoint(entry);
+
+//   %3 = alloca %struct.Point*, align 8
+//   %4 = alloca %struct.Point*, align 8
+//   store %struct.Point* %0, %struct.Point** %3, align 8
+//   store %struct.Point* %1, %struct.Point** %4, align 8
+//   %5 = load %struct.Point*, %struct.Point** %4, align 8
+//   %6 = getelementptr inbounds %struct.Point, %struct.Point* %5, i32 0, i32 1
+//   %7 = load i32, i32* %6, align 4
+//   %8 = load %struct.Point*, %struct.Point** %3, align 8
+//   %9 = getelementptr inbounds %struct.Point, %struct.Point* %8, i32 0, i32 1
+//   %10 = load i32, i32* %9, align 4
+//   %11 = sub nsw i32 %7, %10
+//   %12 = load %struct.Point*, %struct.Point** %4, align 8
+//   %13 = getelementptr inbounds %struct.Point, %struct.Point* %12, i32 0, i32 1
+//   %14 = load i32, i32* %13, align 4
+//   %15 = load %struct.Point*, %struct.Point** %3, align 8
+//   %16 = getelementptr inbounds %struct.Point, %struct.Point* %15, i32 0, i32 1
+
+
+    id2value[3] = builder->CreateAlloca(Point);
+    id2value[4] = builder->CreateAlloca(Point);
+
+    // builder->CreateStore(id2value[0], id2value[3]);
+    // builder->CreateStore(id2value[1], id2value[4]);
+    id2value[5] = builder->CreateLoad(Point, id2value[4]);
+    //id2value[6] = builder->CreateInBoundsGEP(Point, id2value[5], {llvm::ConstantInt::get(builder->getInt32Ty(), 0) , llvm::ConstantInt::get(builder->getInt32Ty(), 1)} );
+    id2value[7] = builder->CreateLoad(builder->getInt32Ty(), id2value[6]);
+    id2value[8] = builder->CreateLoad(Point, id2value[3]);
+    //id2value[9] = builder->CreateInBoundsGEP(Point, id2value[8], {llvm::ConstantInt::get(builder->getInt32Ty(), 0) , llvm::ConstantInt::get(builder->getInt32Ty(), 1)} );
+    id2value[10] = builder->CreateLoad(builder->getInt32Ty(), id2value[9]);
+    id2value[11] = builder->CreateNSWSub(id2value[7], id2value[10]);
+    id2value[12] = builder->CreateLoad(Point, id2value[4]);
+    //id2value[13] = builder->CreateInBoundsGEP(Point, id2value[12], {llvm::ConstantInt::get(builder->getInt32Ty(), 0) , llvm::ConstantInt::get(builder->getInt32Ty(), 1)} );
+    id2value[14] = builder->CreateLoad(builder->getInt32Ty(), id2value[13]);
+    id2value[15] = builder->CreateLoad(Point, id2value[3]);
+    //id2value[13] = builder->CreateInBoundsGEP(Point, id2value[15], {llvm::ConstantInt::get(builder->getInt32Ty(), 0) , llvm::ConstantInt::get(builder->getInt32Ty(), 1)} );
+
+
+//   %17 = load i32, i32* %16, align 4
+//   %18 = sub nsw i32 %14, %17
+//   %19 = mul nsw i32 %11, %18
+//   %20 = load %struct.Point*, %struct.Point** %4, align 8
+//   %21 = getelementptr inbounds %struct.Point, %struct.Point* %20, i32 0, i32 2
+//   %22 = load i32, i32* %21, align 4
+//   %23 = load %struct.Point*, %struct.Point** %3, align 8
+//   %24 = getelementptr inbounds %struct.Point, %struct.Point* %23, i32 0, i32 2
+//   %25 = load i32, i32* %24, align 4
+//   %26 = sub nsw i32 %22, %25
+//   %27 = load %struct.Point*, %struct.Point** %4, align 8
+//   %28 = getelementptr inbounds %struct.Point, %struct.Point* %27, i32 0, i32 2
+//   %29 = load i32, i32* %28, align 4
+//   %30 = load %struct.Point*, %struct.Point** %3, align 8
+//   %31 = getelementptr inbounds %struct.Point, %struct.Point* %30, i32 0, i32 2
+//   %32 = load i32, i32* %31, align 4
+//   %33 = sub nsw i32 %29, %32
+//   %34 = mul nsw i32 %26, %33
+//   %35 = add nsw i32 %19, %34
+//   ret i32 %35
+    id2value[17] = builder->CreateLoad(builder->getInt32Ty(), id2value[16]);
+    id2value[18] = builder->CreateNSWSub(id2value[14], id2value[17]);
+    id2value[19] = builder->CreateNSWMul(id2value[11], id2value[18]);
+    id2value[20] = builder->CreateLoad(Point, id2value[4]);
+    //id2value[21] = builder->CreateInBoundsGEP(Point, id2value[20], {llvm::ConstantInt::get(builder->getInt32Ty(), 0) , llvm::ConstantInt::get(builder->getInt32Ty(), 2)} );
+    id2value[22] = builder->CreateLoad(builder->getInt32Ty(), id2value[21]);
+    id2value[23] = builder->CreateLoad(Point, id2value[3]);
+    //id2value[24] = builder->CreateInBoundsGEP(Point, id2value[23], {llvm::ConstantInt::get(builder->getInt32Ty(), 0) , llvm::ConstantInt::get(builder->getInt32Ty(), 2)} );
+    id2value[25] = builder->CreateLoad(builder->getInt32Ty(), id2value[24]);
+    id2value[26] = builder->CreateNSWSub(id2value[22], id2value[25]);
+    id2value[27] = builder->CreateLoad(Point, id2value[4]);
+    //id2value[28] = builder->CreateInBoundsGEP(Point, id2value[27], {llvm::ConstantInt::get(builder->getInt32Ty(), 0) , llvm::ConstantInt::get(builder->getInt32Ty(), 2)} );
+    id2value[29] = builder->CreateLoad(builder->getInt32Ty(), id2value[28]);
+    id2value[30] = builder->CreateLoad(Point, id2value[3]);
+    //id2value[31] = builder->CreateInBoundsGEP(Point, id2value[30], {llvm::ConstantInt::get(builder->getInt32Ty(), 0) , llvm::ConstantInt::get(builder->getInt32Ty(), 2)} );
+    id2value[32] = builder->CreateLoad(builder->getInt32Ty(), id2value[31]);
+    id2value[33] = builder->CreateNSWSub(id2value[29], id2value[32]);
+    id2value[34] = builder->CreateNSWMul(id2value[26], id2value[33]);
+    id2value[35] = builder->CreateNSWAdd(id2value[19], id2value[34]);
+    builder->CreateRet(id2value[35]);
+}
+
+
+void set_timer_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
+
+    std::unordered_map<int, llvm::BasicBlock*> id2bb;
+    std::unordered_map<int, llvm::Value*> id2value;
+
+    auto&& set_timerFunc = module->getFunction("set_timer");
+    llvm::BasicBlock *entry = llvm::BasicBlock::Create(module->getContext(), "entrypoint", set_timerFunc);
+    builder->SetInsertPoint(entry);
+
+//   %2 = alloca i32, align 4
+//   store i32 %0, i32* %2, align 4
+//   ret void
+
+    id2value[2] = builder->CreateAlloca(builder->getInt32Ty());
+    //builder->CreateStore(id2value[0], id2value[2]);
+    builder->CreateRetVoid();
+}
+
 void calc_vor_diag_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
 
     std::unordered_map<int, llvm::BasicBlock*> id2bb;
@@ -1060,14 +1168,13 @@ int main() {
     main_codegen(module, &builder);
     reset_picture_codegen(module, &builder);
     calc_vor_diag_codegen(module, &builder);
-    // dist_codegen(module, &builder);
+    dist_codegen(module, &builder);
     // display_codegen(module, &builder);
     // calc_new_centers_codegen(module, &builder);
     // calc_timf_codegen(module, &builder);
-    // set_timer_codegen(module, &builder);
+    set_timer_codegen(module, &builder);
     dump_codegen(module);
     return 0;
-    //display_codegen(module, &builder);
 
     //Interpreter of LLVM IR
 //     llvm::ExecutionEngine *ee =
