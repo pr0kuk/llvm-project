@@ -729,14 +729,26 @@ void calc_new_centers_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) 
 // 97:                                               ; preds = %44, %34
 //   br label %98
 
+    builder->SetInsertPoint(id2bb[97]);
+    builder->CreateBr(id2bb[98]);
+
 // 98:                                               ; preds = %97
 //   %99 = load i32, i32* %8, align 4
 //   %100 = add nsw i32 %99, 1
 //   store i32 %100, i32* %8, align 4
 //   br label %31
 
+    builder->SetInsertPoint(id2bb[98]);
+    id2value[99] = builder->CreateLoad(builder->getInt32Ty(), id2value[8]);
+    id2value[100] = builder->CreateNSWAdd(id2value[99], llvm::ConstantInt::get(builder->getInt64Ty(), 1));
+    builder->CreateStore(id2value[100], id2value[8]);
+    builder->CreateBr(id2bb[31]);
+
 // 101:                                              ; preds = %31
 //   br label %102
+
+    builder->SetInsertPoint(id2bb[101]);
+    builder->CreateBr(id2bb[102]);
 
 // 102:                                              ; preds = %101
 //   %103 = load i32, i32* %7, align 4
@@ -744,14 +756,29 @@ void calc_new_centers_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) 
 //   store i32 %104, i32* %7, align 4
 //   br label %27
 
+    builder->SetInsertPoint(id2bb[102]);
+    id2value[103] = builder->CreateLoad(builder->getInt32Ty(), id2value[7]);
+    id2value[104] = builder->CreateNSWAdd(id2value[103], llvm::ConstantInt::get(builder->getInt64Ty(), 1));
+    builder->CreateStore(id2value[104], id2value[7]);
+    builder->CreateBr(id2bb[27]);
+
 // 105:                                              ; preds = %27
 //   store i32 0, i32* %9, align 4
 //   br label %106
+
+    builder->SetInsertPoint(id2bb[105]);
+    builder->CreateStore(llvm::ConstantInt::get(builder->getInt64Ty(), 0) , id2value[9]);
+    builder->CreateBr(id2bb[106]);
 
 // 106:                                              ; preds = %162, %105
 //   %107 = load i32, i32* %9, align 4
 //   %108 = icmp slt i32 %107, 10
 //   br i1 %108, label %109, label %165
+
+    builder->SetInsertPoint(id2bb[106]);
+    id2value[107] = builder->CreateLoad(builder->getInt32Ty(), id2value[9]);
+    id2value[108] = builder->CreateICmpSLT(id2value[107], llvm::ConstantInt::get(builder->getInt32Ty(), 10));
+    builder->CreateCondBr(id2value[108], id2bb[109], id2bb[165]);
 
 // 109:                                              ; preds = %106
 //   %110 = load i32, i32* %9, align 4
