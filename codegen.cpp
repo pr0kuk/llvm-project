@@ -972,6 +972,50 @@ void set_timer_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
     builder->CreateRetVoid();
 }
 
+
+void loop_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
+
+    std::unordered_map<int, llvm::BasicBlock*> id2bb;
+    std::unordered_map<int, llvm::Value*> id2value;
+
+    auto&& loopFunc = module->getFunction("loop");
+    llvm::BasicBlock *entry = llvm::BasicBlock::Create(module->getContext(), "entrypoint", loopFunc);
+    builder->SetInsertPoint(entry);
+    id2bb[1] = llvm::BasicBlock::Create(module->getContext(), "1", loopFunc );
+    id2bb[4] = llvm::BasicBlock::Create(module->getContext(), "4", loopFunc );
+    id2bb[5] = llvm::BasicBlock::Create(module->getContext(), "5", loopFunc );
+    // call void @display()
+    // br label %1
+
+    auto displayFunc = module->getFunction("display");
+    builder->CreateCall(displayFunc);
+    builder->CreateBr(id2bb[1]);
+    // 1:                                                ; preds = %4, %0
+    // %2 = load i32, i32* @show_window, align 4
+    // %3 = icmp eq i32 %2, 1
+    // br i1 %3, label %4, label %5
+    auto show_window = module->getNamedGlobal("show_window");
+    builder->SetInsertPoint(id2bb[1]);
+    id2value[2] = builder->CreateLoad(builder->getInt32Ty(), show_window);
+    id2value[3] = builder->CreateICmpSLT(id2value[2], llvm::ConstantInt::get(builder->getInt32Ty(), 1));
+    builder->CreateCondBr(id2value[3], id2bb[4], id2bb[5]);
+
+    // 4:                                                ; preds = %1
+    // call void @timf(i32 10)
+    // br label %1
+    builder->SetInsertPoint(id2bb[4]);
+    auto timfFunc = module->getFunction("timf");
+    builder->CreateCall(timfFunc,llvm::ConstantInt::get(builder->getInt32Ty(), 10) );
+    builder->CreateBr(id2bb[1]);
+
+    // 5:                                                ; preds = %1
+    // ret void
+    builder->SetInsertPoint(id2bb[5]);
+    builder->CreateRetVoid();
+
+    }
+
+
 void calc_vor_diag_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
 
     std::unordered_map<int, llvm::BasicBlock*> id2bb;
@@ -1331,14 +1375,15 @@ int main() {
     llvm::Module *module = new llvm::Module("top", context);
     llvm::IRBuilder<> builder(context);
     create_declarations(module, &builder);
-    main_codegen(module, &builder);
-    reset_picture_codegen(module, &builder);
-    calc_vor_diag_codegen(module, &builder);
-    dist_codegen(module, &builder);
-    calc_new_centers_codegen(module, &builder);
-    timf_codegen(module, &builder);
-    set_timer_codegen(module, &builder);
-    display_codegen(module, &builder);
+    main_codegen(module, &builder); //correct
+    // reset_picture_codegen(module, &builder); //errors
+    // calc_vor_diag_codegen(module, &builder);
+    // dist_codegen(module, &builder);
+    // calc_new_centers_codegen(module, &builder);
+    timf_codegen(module, &builder); //correct
+    // set_timer_codegen(module, &builder);
+    // display_codegen(module, &builder); //errors
+    loop_codegen(module, &builder); //correct
     dump_codegen(module);
     return 0;
 
