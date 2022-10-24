@@ -7,19 +7,10 @@
 #include <iostream>
 #include <string>
 #include <unordered_map>
-void reset_picture();
-void gl_init(int argc, char** argv);
-void loop();
+
 llvm::ArrayType* pixels_subtype;
 llvm::StructType* Point;
 llvm::ArrayType* pixels_type;
-
-void LLVM_main() {
-    std::cout << "ALIVE!!" << std::endl;
-    // gl_init(argc, argv);
-    // reset_picture();
-    // loop();
-}
 
 void dump_codegen(llvm::Module* module) {
     std::string s;
@@ -1369,38 +1360,18 @@ void create_declarations(llvm::Module* module, llvm::IRBuilder<>* builder) {
 int main() {
 
     llvm::LLVMContext context;
-    // ; ModuleID = 'top'
-    // source_filename = "top"
     llvm::Module *module = new llvm::Module("top", context);
     llvm::IRBuilder<> builder(context);
     create_declarations(module, &builder);
-    main_codegen(module, &builder); //correct
-    reset_picture_codegen(module, &builder); //errors
+    main_codegen(module, &builder);
+    reset_picture_codegen(module, &builder);
     calc_vor_diag_codegen(module, &builder);
     dist_codegen(module, &builder);
-    // calc_new_centers_codegen(module, &builder);
-    timf_codegen(module, &builder); //correct
+    calc_new_centers_codegen(module, &builder);
+    timf_codegen(module, &builder);
     set_timer_codegen(module, &builder);
-    display_codegen(module, &builder); //errors
-    loop_codegen(module, &builder); //correct
+    display_codegen(module, &builder);
+    loop_codegen(module, &builder);
     dump_codegen(module);
-    return 0;
-
-    //Interpreter of LLVM IR
-//     llvm::ExecutionEngine *ee =
-//         llvm::EngineBuilder(std::unique_ptr<llvm::Module>(module)).create();
-
-//           ee->InstallLazyFunctionCreator([&](const std::string &fnName) -> void *
-//                                  {
-//     if (fnName == "LLVM_main") {
-//       return reinterpret_cast<void *>(LLVM_main);
-//     }
-//     return nullptr; });
-
-//   ee->finalizeObject();
-//   std::vector<llvm::GenericValue> noargs;
-//   llvm::GenericValue v = ee->runFunction(mainFunc, noargs);
-
-
     return 0;
 }
