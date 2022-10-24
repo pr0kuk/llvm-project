@@ -27,6 +27,275 @@ void dump_codegen(llvm::Module* module) {
     std::cout << s;
 }
 
+void display_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
+    std::unordered_map<int, llvm::BasicBlock*> id2bb;
+    std::unordered_map<int, llvm::Value*> id2value;
+
+    auto&& displayFunc = module->getFunction("display");
+    id2bb[1] = llvm::BasicBlock::Create(module->getContext(), "1", displayFunc );
+    id2bb[4] = llvm::BasicBlock::Create(module->getContext(), "4", displayFunc );
+    id2bb[11] = llvm::BasicBlock::Create(module->getContext(), "11", displayFunc );
+    id2bb[14] = llvm::BasicBlock::Create(module->getContext(), "14", displayFunc );
+    id2bb[18] = llvm::BasicBlock::Create(module->getContext(), "18", displayFunc );
+    id2bb[31] = llvm::BasicBlock::Create(module->getContext(), "31", displayFunc );
+    id2bb[33] = llvm::BasicBlock::Create(module->getContext(), "33", displayFunc );
+    id2bb[39] = llvm::BasicBlock::Create(module->getContext(), "39", displayFunc );
+    id2bb[40] = llvm::BasicBlock::Create(module->getContext(), "40", displayFunc );
+    id2bb[42] = llvm::BasicBlock::Create(module->getContext(), "42", displayFunc );
+    id2bb[43] = llvm::BasicBlock::Create(module->getContext(), "43", displayFunc );
+    id2bb[46] = llvm::BasicBlock::Create(module->getContext(), "46", displayFunc );
+
+    builder->CreateBr(id2bb[1]);
+
+// 1:                                                ; preds = %11, %0
+//   %2 = phi i64 [ 0, %0 ], [ %12, %11 ]
+//   %3 = trunc i64 %2 to i32
+//   br label %4
+    builder->SetInsertPoint(id2bb[1]);
+    auto&& phiNode = builder->CreatePHI(builder->getInt64Ty(), 2);
+    phiNode->addIncoming(llvm::ConstantInt::get(builder->getInt64Ty(), 0), id2bb[0]);
+    phiNode->addIncoming(id2value[12], id2bb[11]);
+    id2value[2] = phiNode;
+    id2value[3] = builder->CreateTrunc(id2value[2], builder->getInt32Ty());
+    builder->CreateBr(id2bb[4]);
+
+// 4:                                                ; preds = %14, %1
+//   %5 = phi i64 [ 0, %1 ], [ %16, %14 ]
+//   %6 = getelementptr inbounds [800 x [800 x %struct.Point]], [800 x [800 x %struct.Point]]* @pixels, i64 0, i64 %2, i64 %5, i32 1
+//   %7 = load i32, i32* %6, align 4, !tbaa !2
+//   %8 = getelementptr inbounds [800 x [800 x %struct.Point]], [800 x [800 x %struct.Point]]* @pixels, i64 0, i64 %2, i64 %5, i32 2
+//   %9 = load i32, i32* %8, align 4, !tbaa !7
+//   %10 = getelementptr inbounds [800 x [800 x %struct.Point]], [800 x [800 x %struct.Point]]* @pixels, i64 0, i64 %2, i64 %5, i32 0
+//   br label %18
+
+    builder->SetInsertPoint(id2bb[4]);
+    phiNode = builder->CreatePHI(builder->getInt64Ty(), 2);
+    phiNode->addIncoming(llvm::ConstantInt::get(builder->getInt64Ty(), 0), id2bb[1]);
+    phiNode->addIncoming(id2value[16], id2bb[14]);
+    id2value[5] = phiNode;
+
+    auto&& pixels = module->getGlobalVariable("pixels");
+    id2value[6] = builder->CreateGEP(
+        pixels->getValueType(),
+        pixels,
+        {        
+            llvm::ConstantInt::get(builder->getInt64Ty(), 0),
+            id2value[2],
+            id2value[5],
+            llvm::ConstantInt::get(builder->getInt32Ty(), 1)
+        }
+    );
+    id2value[7] = builder->CreateLoad(builder->getInt32Ty(), id2value[6]);
+    id2value[8] = builder->CreateGEP(
+        pixels->getValueType(),
+        pixels,
+        {        
+            llvm::ConstantInt::get(builder->getInt64Ty(), 0),
+            id2value[2],
+            id2value[5],
+            llvm::ConstantInt::get(builder->getInt32Ty(), 2)
+        }
+    );
+    id2value[9] = builder->CreateLoad(builder->getInt32Ty(), id2value[8]);
+    id2value[10] = builder->CreateGEP(
+        pixels->getValueType(),
+        pixels,
+        {        
+            llvm::ConstantInt::get(builder->getInt64Ty(), 0),
+            id2value[2],
+            id2value[5],
+            llvm::ConstantInt::get(builder->getInt32Ty(), 0)
+        }
+    );
+    builder->CreateBr(id2bb[18]);
+
+
+
+//     11:                                               ; preds = %14
+//   %12 = add nuw nsw i64 %2, 1
+//   %13 = icmp eq i64 %12, 800
+//   br i1 %13, label %39, label %1
+
+
+    builder->SetInsertPoint(id2bb[11]);
+    id2value[12] = builder->CreateNSWAdd(id2value[2], llvm::ConstantInt::get(builder->getInt64Ty(), 1));
+    id2value[13] = builder->CreateICmpEQ(id2value[12], llvm::ConstantInt::get(builder->getInt64Ty(), 800));
+    builder->CreateCondBr(id2value[13], id2bb[39], id2bb[1]);
+
+// 14:                                               ; preds = %33
+//   %15 = trunc i64 %5 to i32
+//   store i32 %15, i32* %6, align 4, !tbaa !2
+//   store i32 %3, i32* %8, align 4, !tbaa !7
+//   %16 = add nuw nsw i64 %5, 1
+//   %17 = icmp eq i64 %16, 800
+//   br i1 %17, label %11, label %4
+
+    builder->SetInsertPoint(id2bb[14]);
+    id2value[15] = builder->CreateTrunc(id2value[5], builder->getInt32Ty());
+    builder->CreateStore(id2value[15], id2value[6]);
+    builder->CreateStore(id2value[3], id2value[8]);
+    id2value[16] = builder->CreateNSWAdd(id2value[5], llvm::ConstantInt::get(builder->getInt64Ty(), 1));
+    id2value[17] = builder->CreateICmpEQ(id2value[16], llvm::ConstantInt::get(builder->getInt64Ty(), 800));
+    builder->CreateCondBr(id2value[17], id2bb[11], id2bb[4]);
+
+
+
+// 18:                                               ; preds = %33, %4
+//   %19 = phi i64 [ 0, %4 ], [ %35, %33 ]
+//   %20 = phi i32 [ 1000000000, %4 ], [ %34, %33 ]
+//   %21 = getelementptr inbounds [10 x %struct.Point], [10 x %struct.Point]* @points, i64 0, i64 %19, i32 1
+//   %22 = load i32, i32* %21, align 4, !tbaa !2
+//   %23 = sub nsw i32 %22, %7
+//   %24 = mul nsw i32 %23, %23
+//   %25 = getelementptr inbounds [10 x %struct.Point], [10 x %struct.Point]* @points, i64 0, i64 %19, i32 2
+//   %26 = load i32, i32* %25, align 4, !tbaa !7
+//   %27 = sub nsw i32 %26, %9
+//   %28 = mul nsw i32 %27, %27
+//   %29 = add nuw nsw i32 %28, %24
+//   %30 = icmp slt i32 %29, %20
+//   br i1 %30, label %31, label %33
+
+
+    builder->SetInsertPoint(id2bb[18]);
+    phiNode = builder->CreatePHI(builder->getInt64Ty(), 2);
+    phiNode->addIncoming(llvm::ConstantInt::get(builder->getInt64Ty(), 0), id2bb[4]);
+    phiNode->addIncoming(id2value[35], id2bb[33]);
+    id2value[19] = phiNode;
+
+    phiNode = builder->CreatePHI(builder->getInt32Ty(), 2);
+    phiNode->addIncoming(llvm::ConstantInt::get(builder->getInt64Ty(), 1000000000), id2bb[4]);
+    phiNode->addIncoming(id2value[34], id2bb[33]);
+    id2value[20] = phiNode;
+    auto&& points = module->getGlobalVariable("points");
+    id2value[21] = builder->CreateGEP(
+        points->getValueType(),
+        points,
+        {        
+            llvm::ConstantInt::get(builder->getInt64Ty(), 0),
+            id2value[19],
+            llvm::ConstantInt::get(builder->getInt32Ty(), 1)
+        }
+    );
+    id2value[22] = builder->CreateLoad(builder->getInt32Ty(), id2value[21]);
+    id2value[23] = builder->CreateNSWSub(id2value[22], id2value[7]);
+    id2value[24] = builder->CreateNSWMul(id2value[23], id2value[23]);
+    id2value[25] = builder->CreateGEP(
+        points->getValueType(),
+        points,
+        {        
+            llvm::ConstantInt::get(builder->getInt64Ty(), 0),
+            id2value[19],
+            llvm::ConstantInt::get(builder->getInt32Ty(), 2)
+        }
+    );
+    id2value[26] = builder->CreateLoad(builder->getInt32Ty(), id2value[25]);
+    id2value[27] = builder->CreateNSWSub(id2value[26], id2value[9]);
+    id2value[28] = builder->CreateNSWMul(id2value[27], id2value[27]);
+    id2value[29] = builder->CreateNSWAdd(id2value[28], id2value[24]);
+    id2value[30] = builder->CreateICmpSLT(id2value[29], id2value[20]);
+    builder->CreateCondBr(id2value[30], id2bb[31], id2bb[33]);
+
+// 31:                                               ; preds = %18
+//   %32 = trunc i64 %19 to i32
+//   store i32 %32, i32* %10, align 4, !tbaa !8
+//   br label %33
+
+
+    builder->SetInsertPoint(id2bb[31]);
+    id2value[32] = builder->CreateTrunc(id2value[19], builder->getInt32Ty());
+    builder->CreateStore(id2value[32], id2value[10]);
+    builder->CreateBr(id2bb[33]);
+
+// 33:                                               ; preds = %31, %18
+//   %34 = phi i32 [ %29, %31 ], [ %20, %18 ]
+//   %35 = add nuw nsw i64 %19, 1
+//   %36 = icmp ult i64 %19, 9
+//   %37 = icmp sgt i32 %34, 0
+//   %38 = and i1 %36, %37
+//   br i1 %38, label %18, label %14
+
+    builder->SetInsertPoint(id2bb[33]);
+    phiNode = builder->CreatePHI(builder->getInt32Ty(), 2);
+    phiNode->addIncoming(id2value[29], id2bb[31]);
+    phiNode->addIncoming(id2value[20], id2bb[18]);
+    id2value[34] = phiNode;
+    id2value[35] = builder->CreateNSWAdd(id2value[19], llvm::ConstantInt::get(builder->getInt64Ty(), 1));
+    id2value[36] = builder->CreateICmpULT(id2value[19], llvm::ConstantInt::get(builder->getInt64Ty(), 9));
+    id2value[37] = builder->CreateICmpSGT(id2value[34], llvm::ConstantInt::get(builder->getInt64Ty(), 0));
+    id2value[38] = builder->CreateAnd(id2value[36], id2value[37]);
+        builder->CreateCondBr(id2value[38], id2bb[18], id2bb[14]);
+
+// 39:                                               ; preds = %11
+//   tail call void (...) @gl_start() #7
+//   br label %40
+
+    builder->SetInsertPoint(id2bb[39]);
+    auto gl_startFunc = module->getFunction("gl_start");
+    builder->CreateCall(gl_startFunc->getFunctionType(), gl_startFunc);
+    builder->CreateBr(id2bb[40]);
+// 40:                                               ; preds = %43, %39
+//   %41 = phi i64 [ 0, %39 ], [ %44, %43 ]
+//   br label %46
+
+    builder->SetInsertPoint(id2bb[40]);
+    phiNode = builder->CreatePHI(builder->getInt64Ty(), 2);
+    phiNode->addIncoming(llvm::ConstantInt::get(builder->getInt64Ty(), 0), id2bb[39]);
+    phiNode->addIncoming(id2value[44], id2bb[43]);
+    id2value[34] = phiNode;
+    builder->CreateBr(id2bb[46]);
+
+// 42:                                               ; preds = %43
+//   tail call void (...) @gl_flush() #7
+//   ret void
+
+    builder->SetInsertPoint(id2bb[42]);
+    auto gl_flushFunc = module->getFunction("gl_flush");
+    builder->CreateCall(gl_flushFunc->getFunctionType(), gl_flushFunc);
+    builder->CreateRetVoid();
+// 43:                                               ; preds = %46
+//   %44 = add nuw nsw i64 %41, 1
+//   %45 = icmp eq i64 %44, 800
+//   br i1 %45, label %42, label %40
+    builder->SetInsertPoint(id2bb[43]);
+    id2value[44] = builder->CreateNSWAdd(id2value[41], llvm::ConstantInt::get(builder->getInt64Ty(), 1));
+    id2value[45] = builder->CreateICmpEQ(id2value[44], llvm::ConstantInt::get(builder->getInt64Ty(), 800));
+    builder->CreateCondBr(id2value[45], id2bb[42], id2bb[40]);
+// 46:                                               ; preds = %46, %40
+//   %47 = phi i64 [ 0, %40 ], [ %49, %46 ]
+//   %48 = getelementptr inbounds [800 x [800 x %struct.Point]], [800 x [800 x %struct.Point]]* @pixels, i64 0, i64 %41, i64 %47
+//   tail call void @gl_put_pixel(%struct.Point* nonnull %48) #7
+//   %49 = add nuw nsw i64 %47, 1
+//   %50 = icmp eq i64 %49, 800
+//   br i1 %50, label %43, label %46
+
+ builder->SetInsertPoint(id2bb[46]);
+    phiNode = builder->CreatePHI(builder->getInt64Ty(), 2);
+    phiNode->addIncoming(llvm::ConstantInt::get(builder->getInt64Ty(), 0), id2bb[40]);
+    phiNode->addIncoming(id2value[49], id2bb[46]);
+    id2value[47] = phiNode;
+
+    pixels = module->getGlobalVariable("pixels");
+    id2value[48] = builder->CreateGEP(
+        pixels->getValueType(),
+        pixels,
+        {        
+            llvm::ConstantInt::get(builder->getInt64Ty(), 0),
+            id2value[41],
+            id2value[47],
+        }
+    );
+    auto gl_put_pixelFunc = module->getFunction("gl_put_pixel");
+    builder->CreateCall(gl_put_pixelFunc->getFunctionType(), gl_put_pixelFunc);
+    id2value[49] = builder->CreateNSWAdd(id2value[47], llvm::ConstantInt::get(builder->getInt64Ty(), 1));
+    id2value[50] = builder->CreateICmpEQ(id2value[49], llvm::ConstantInt::get(builder->getInt64Ty(), 800));
+    builder->CreateCondBr(id2value[50], id2bb[43], id2bb[46]);
+
+}
+
+
+
+
+
 void reset_picture_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
     std::unordered_map<int, llvm::BasicBlock*> id2bb;
     std::unordered_map<int, llvm::Value*> id2value;
@@ -51,7 +320,7 @@ void reset_picture_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
     //   %3 = trunc i64 %2 to i32
     //   br label %4
     builder->SetInsertPoint(id2bb[1]);
-    auto&& phiNode = builder->CreatePHI(builder->getInt64Ty(), 1);
+    auto&& phiNode = builder->CreatePHI(builder->getInt64Ty(), 2);
     phiNode->addIncoming(id2value[12], id2bb[11]);
     phiNode->addIncoming(llvm::ConstantInt::get(builder->getInt64Ty(), 0), id2bb[40]);
     id2value[2] = phiNode;
@@ -71,7 +340,7 @@ void reset_picture_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
     builder->SetInsertPoint(id2bb[4]);
     phiNode = builder->CreatePHI(builder->getInt64Ty(), 2);
     phiNode->addIncoming(llvm::ConstantInt::get(builder->getInt64Ty(), 0), id2bb[1]);
-    phiNode->addIncoming(id2bb[0], id2bb[14]);
+    phiNode->addIncoming(id2value[0], id2bb[14]);
     id2value[5] = phiNode;
 
     auto&& pixels = module->getGlobalVariable("pixels");
@@ -93,7 +362,7 @@ void reset_picture_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
             llvm::ConstantInt::get(builder->getInt64Ty(), 0),
             id2value[2],
             id2value[5],
-            llvm::ConstantInt::get(builder->getInt32Ty(), 1)
+            llvm::ConstantInt::get(builder->getInt32Ty(), 2)
         }
     );
     id2value[9] = builder->CreateLoad(builder->getInt32Ty(), id2value[8]);
@@ -104,7 +373,7 @@ void reset_picture_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
             llvm::ConstantInt::get(builder->getInt64Ty(), 0),
             id2value[2],
             id2value[5],
-            llvm::ConstantInt::get(builder->getInt32Ty(), 1)
+            llvm::ConstantInt::get(builder->getInt32Ty(), 0)
         }
     );
     builder->CreateBr(id2bb[18]);
@@ -154,12 +423,12 @@ void reset_picture_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
     builder->SetInsertPoint(id2bb[18]);
     phiNode = builder->CreatePHI(builder->getInt64Ty(), 2);
     phiNode->addIncoming(llvm::ConstantInt::get(builder->getInt64Ty(), 0), id2bb[4]);
-    phiNode->addIncoming(id2bb[35], id2bb[33]);
+    phiNode->addIncoming(id2value[35], id2bb[33]);
     id2value[19] = phiNode;
 
     phiNode = builder->CreatePHI(builder->getInt32Ty(), 2);
     phiNode->addIncoming(llvm::ConstantInt::get(builder->getInt64Ty(), 1000000000), id2bb[4]);
-    phiNode->addIncoming(id2bb[34], id2bb[33]);
+    phiNode->addIncoming(id2value[34], id2bb[33]);
     id2value[20] = phiNode;
     auto&& points = module->getGlobalVariable("points");
     id2value[21] = builder->CreateGEP(
@@ -187,7 +456,7 @@ void reset_picture_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
     id2value[27] = builder->CreateNSWSub(id2value[26], id2value[9]);
     id2value[28] = builder->CreateNSWMul(id2value[27], id2value[27]);
     id2value[29] = builder->CreateNSWAdd(id2value[28], id2value[24]);
-    id2value[30] = builder->CreateICmpSLT(id2value[29], id2value[30]);
+    id2value[30] = builder->CreateICmpSLT(id2value[29], id2value[20]);
     builder->CreateCondBr(id2value[30], id2bb[31], id2bb[33]);
 
 
@@ -211,8 +480,8 @@ void reset_picture_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
 
     builder->SetInsertPoint(id2bb[33]);
     phiNode = builder->CreatePHI(builder->getInt32Ty(), 2);
-    phiNode->addIncoming(id2bb[29], id2bb[31]);
-    phiNode->addIncoming(id2bb[20], id2bb[18]);
+    phiNode->addIncoming(id2value[29], id2bb[31]);
+    phiNode->addIncoming(id2value[20], id2bb[18]);
     id2value[34] = phiNode;
     id2value[35] = builder->CreateNSWAdd(id2value[19], llvm::ConstantInt::get(builder->getInt64Ty(), 1));
     id2value[36] = builder->CreateICmpULT(id2value[19], llvm::ConstantInt::get(builder->getInt64Ty(), 9));
@@ -352,7 +621,7 @@ int main() {
     llvm::Module *module = new llvm::Module("top", context);
     llvm::IRBuilder<> builder(context);
     std::cout << "bef declarations" << std::endl;
-create_declarations(module, &builder);
+    create_declarations(module, &builder);
     std::cout << "aft declarations" << std::endl;
 
     // declare void @main()
@@ -368,13 +637,14 @@ create_declarations(module, &builder);
     // builder.CreateCall(CalleeF);
     std::cout << "bef maincodegen" << std::endl;
 
-main_codegen(module, &builder);
+    main_codegen(module, &builder);
     std::cout << "aft maincodegen" << std::endl;
 
     // call @init_world
 
-reset_picture_codegen(module, &builder);
-dump_codegen(module);
+    reset_picture_codegen(module, &builder);
+    display_codegen(module, &builder);
+    dump_codegen(module);
 
     //Interpreter of LLVM IR
 //     llvm::ExecutionEngine *ee =
