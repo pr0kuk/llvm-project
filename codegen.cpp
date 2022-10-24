@@ -787,6 +787,75 @@ void dist_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
     builder->CreateRet(id2value[35]);
 }
 
+void display_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
+
+    std::unordered_map<int, llvm::BasicBlock*> id2bb;
+    std::unordered_map<int, llvm::Value*> id2value;
+    auto&& displayFunc = module->getFunction("display");
+
+    id2bb[3] = llvm::BasicBlock::Create(module->getContext(), "3", displayFunc );
+    id2bb[6] = llvm::BasicBlock::Create(module->getContext(), "6", displayFunc );
+    id2bb[7] = llvm::BasicBlock::Create(module->getContext(), "7", displayFunc );
+    id2bb[10] = llvm::BasicBlock::Create(module->getContext(), "10", displayFunc );
+    id2bb[17] = llvm::BasicBlock::Create(module->getContext(), "17", displayFunc );
+    id2bb[20] = llvm::BasicBlock::Create(module->getContext(), "20", displayFunc );
+    id2bb[21] = llvm::BasicBlock::Create(module->getContext(), "21", displayFunc );
+    id2bb[24] = llvm::BasicBlock::Create(module->getContext(), "24", displayFunc );
+
+    llvm::BasicBlock *entry = llvm::BasicBlock::Create(module->getContext(), "entrypoint", displayFunc);
+    builder->SetInsertPoint(entry);
+//   %1 = alloca i32, align 4
+//   %2 = alloca i32, align 4
+//   call void @calc_vor_diag()
+//   call void (...) @gl_start()
+//   store i32 0, i32* %1, align 4
+//   br label %3
+
+// 3:                                                ; preds = %21, %0
+//   %4 = load i32, i32* %1, align 4
+//   %5 = icmp slt i32 %4, 800
+//   br i1 %5, label %6, label %24
+
+// 6:                                                ; preds = %3
+//   store i32 0, i32* %2, align 4
+//   br label %7
+
+// 7:                                                ; preds = %17, %6
+//   %8 = load i32, i32* %2, align 4
+//   %9 = icmp slt i32 %8, 800
+//   br i1 %9, label %10, label %20
+
+// 10:                                               ; preds = %7
+//   %11 = load i32, i32* %1, align 4
+//   %12 = sext i32 %11 to i64
+//   %13 = getelementptr inbounds [800 x [800 x %struct.Point]], [800 x [800 x %struct.Point]]* @pixels, i64 0, i64 %12
+//   %14 = load i32, i32* %2, align 4
+//   %15 = sext i32 %14 to i64
+//   %16 = getelementptr inbounds [800 x %struct.Point], [800 x %struct.Point]* %13, i64 0, i64 %15
+//   call void @gl_put_pixel(%struct.Point* %16)
+//   br label %17
+
+// 17:                                               ; preds = %10
+//   %18 = load i32, i32* %2, align 4
+//   %19 = add nsw i32 %18, 1
+//   store i32 %19, i32* %2, align 4
+//   br label %7
+
+// 20:                                               ; preds = %7
+//   br label %21
+
+// 21:                                               ; preds = %20
+//   %22 = load i32, i32* %1, align 4
+//   %23 = add nsw i32 %22, 1
+//   store i32 %23, i32* %1, align 4
+//   br label %3
+
+// 24:                                               ; preds = %3
+//   call void (...) @gl_flush()
+//   ret void
+
+    builder->CreateRetVoid();
+}
 
 void set_timer_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
 
@@ -1169,7 +1238,7 @@ int main() {
     reset_picture_codegen(module, &builder);
     calc_vor_diag_codegen(module, &builder);
     dist_codegen(module, &builder);
-    // display_codegen(module, &builder);
+    display_codegen(module, &builder);
     // calc_new_centers_codegen(module, &builder);
     // calc_timf_codegen(module, &builder);
     set_timer_codegen(module, &builder);
