@@ -611,9 +611,9 @@ void calc_new_centers_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) 
     id2value[47] = builder->CreateInBoundsGEP(pixels->getValueType(), pixels, {llvm::ConstantInt::get(builder->getInt64Ty(), 0) , id2value[46]});
     id2value[48] = builder->CreateLoad(builder->getInt32Ty(), id2value[8]);
     id2value[49] = builder->CreateSExt(id2value[48], builder->getInt64Ty());
-    id2value[50] = builder->CreateInBoundsGEP(pixels_subtype, id2value[47], {llvm::ConstantInt::get(builder->getInt32Ty(),0), id2value[49]});
+    id2value[50] = builder->CreateInBoundsGEP(pixels_subtype, id2value[47], {llvm::ConstantInt::get(builder->getInt64Ty(),0), id2value[49]});
     id2value[51] = builder->CreateInBoundsGEP(Point, id2value[50], {llvm::ConstantInt::get(builder->getInt32Ty(), 0) , llvm::ConstantInt::get(builder->getInt32Ty(), 1)});
-    id2value[52] = builder->CreateLoad(builder->getInt32Ty(), id2value[41]);
+    id2value[52] = builder->CreateLoad(builder->getInt32Ty(), id2value[51]);
     id2value[53] = builder->CreateLoad(builder->getInt32Ty(), id2value[7]);
     id2value[54] = builder->CreateSExt(id2value[53], builder->getInt64Ty());
 
@@ -651,8 +651,6 @@ void calc_new_centers_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) 
     id2value[66] = builder->CreateSExt(id2value[65], builder->getInt64Ty());
 
 
-
-
 //   %67 = getelementptr inbounds [800 x [800 x %struct.Point]], [800 x [800 x %struct.Point]]* @pixels, i64 0, i64 %66
 //   %68 = load i32, i32* %8, align 4
 //   %69 = sext i32 %68 to i64
@@ -664,8 +662,8 @@ void calc_new_centers_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) 
 
     id2value[67] = builder->CreateInBoundsGEP(pixels->getValueType(), pixels, {llvm::ConstantInt::get(builder->getInt64Ty(), 0) , id2value[66]});
     id2value[68] = builder->CreateLoad(builder->getInt32Ty(), id2value[8]);
-    id2value[69] = builder->CreateSExt(id2value[48], builder->getInt64Ty());
-    id2value[70] = builder->CreateInBoundsGEP(pixels_subtype, id2value[67], {llvm::ConstantInt::get(builder->getInt32Ty(),0), id2value[69]});
+    id2value[69] = builder->CreateSExt(id2value[68], builder->getInt64Ty());
+    id2value[70] = builder->CreateInBoundsGEP(pixels_subtype, id2value[67], {llvm::ConstantInt::get(builder->getInt64Ty(),0), id2value[69]});
     id2value[71] = builder->CreateInBoundsGEP(Point, id2value[70], {llvm::ConstantInt::get(builder->getInt32Ty(), 0) , llvm::ConstantInt::get(builder->getInt32Ty(), 2)});
     id2value[72] = builder->CreateLoad(builder->getInt32Ty(), id2value[71]);
     id2value[73] = builder->CreateLoad(builder->getInt32Ty(), id2value[7]);
@@ -699,7 +697,7 @@ void calc_new_centers_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) 
     id2value[82] = builder->CreateInBoundsGEP(ar10, id2value[4], {llvm::ConstantInt::get(builder->getInt64Ty(), 0) , id2value[81]});
     id2value[83] = builder->CreateLoad(builder->getInt32Ty(), id2value[82]);
     id2value[84] = builder->CreateNSWAdd(id2value[83], id2value[72]);
-    builder->CreateStore(id2value[64] , id2value[82]);
+    builder->CreateStore(id2value[84] , id2value[82]);
     id2value[85] = builder->CreateLoad(builder->getInt32Ty(), id2value[7]);
     id2value[86] = builder->CreateSExt(id2value[85], builder->getInt64Ty());
 
@@ -719,11 +717,10 @@ void calc_new_centers_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) 
     id2value[87] = builder->CreateInBoundsGEP(pixels->getValueType(), pixels, {llvm::ConstantInt::get(builder->getInt64Ty(), 0) , id2value[86]});
     id2value[88] = builder->CreateLoad(builder->getInt32Ty(), id2value[8]);
     id2value[89] = builder->CreateSExt(id2value[88], builder->getInt64Ty());
-    id2value[90] = builder->CreateInBoundsGEP(pixels_subtype, id2value[87], {llvm::ConstantInt::get(builder->getInt32Ty(),0), id2value[89]});
+    id2value[90] = builder->CreateInBoundsGEP(pixels_subtype, id2value[87], {llvm::ConstantInt::get(builder->getInt64Ty(),0), id2value[89]});
     id2value[91] = builder->CreateInBoundsGEP(Point, id2value[90], {llvm::ConstantInt::get(builder->getInt32Ty(), 0) , llvm::ConstantInt::get(builder->getInt32Ty(), 0)});
     id2value[92] = builder->CreateLoad(builder->getInt32Ty(), id2value[91]);
     id2value[93] = builder->CreateSExt(id2value[92], builder->getInt64Ty());
-
     id2value[94] = builder->CreateInBoundsGEP(ar10, id2value[5], {llvm::ConstantInt::get(builder->getInt64Ty(), 0) , id2value[93]});
     id2value[95] = builder->CreateLoad(builder->getInt32Ty(), id2value[94]);
     id2value[96] = builder->CreateNSWAdd(id2value[95], llvm::ConstantInt::get(builder->getInt32Ty(), 1));
@@ -812,7 +809,7 @@ void calc_new_centers_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) 
     id2value[113] = builder->CreateLoad(builder->getInt32Ty(), id2value[112]);
     id2value[114] = builder->CreateLoad(builder->getInt32Ty(), id2value[9]);
     id2value[115] = builder->CreateSExt(id2value[114], builder->getInt64Ty());
-    id2value[116] = builder->CreateInBoundsGEP(ar10, id2value[5], {llvm::ConstantInt::get(builder->getInt32Ty(),0), id2value[115]});
+    id2value[116] = builder->CreateInBoundsGEP(ar10, id2value[5], {llvm::ConstantInt::get(builder->getInt64Ty(),0), id2value[115]});
     id2value[117] = builder->CreateLoad(builder->getInt32Ty(), id2value[116]);
     id2value[118] = builder->CreateSDiv(id2value[113], id2value[117]);
     builder->CreateStore(id2value[118], id2value[2]);
@@ -885,7 +882,7 @@ void calc_new_centers_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) 
     id2value[139] = builder->CreateLoad(builder->getInt32Ty(), id2value[138]);
     id2value[140] = builder->CreateLoad(builder->getInt32Ty(), id2value[9]);
     id2value[141] = builder->CreateSExt(id2value[140], builder->getInt64Ty());
-    id2value[142] = builder->CreateInBoundsGEP(ar10, id2value[5], {llvm::ConstantInt::get(builder->getInt32Ty(),0), id2value[141]});
+    id2value[142] = builder->CreateInBoundsGEP(ar10, id2value[5], {llvm::ConstantInt::get(builder->getInt64Ty(),0), id2value[141]});
     id2value[143] = builder->CreateLoad(builder->getInt32Ty(), id2value[142]);
     id2value[144] = builder->CreateSDiv(id2value[139], id2value[143]);
     builder->CreateStore(id2value[144], id2value[2]);
@@ -923,7 +920,7 @@ void calc_new_centers_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) 
     builder->SetInsertPoint(id2bb[155]);
     id2value[156] = builder->CreateLoad(builder->getInt32Ty(), id2value[2]);
     id2value[157] = builder->CreateLoad(builder->getInt32Ty(), id2value[9]);
-    id2value[158] = builder->CreateSExt(id2value[131], builder->getInt64Ty());
+    id2value[158] = builder->CreateSExt(id2value[157], builder->getInt64Ty());
     id2value[159] = builder->CreateInBoundsGEP(points->getValueType(), points, {llvm::ConstantInt::get(builder->getInt64Ty(), 0) , id2value[158]});
     id2value[160] = builder->CreateInBoundsGEP(Point, id2value[159], {llvm::ConstantInt::get(builder->getInt32Ty(), 0) , llvm::ConstantInt::get(builder->getInt32Ty(), 2)});
     builder->CreateStore(id2value[156], id2value[160]);
