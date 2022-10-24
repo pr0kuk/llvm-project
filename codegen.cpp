@@ -333,7 +333,6 @@ void display_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
     builder->CreateRetVoid();
 }
 
-
 void timf_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
 
     std::unordered_map<int, llvm::BasicBlock*> id2bb;
@@ -408,6 +407,278 @@ void timf_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
     builder->CreateRetVoid();
 }
 
+void calc_new_centers_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
+
+    std::unordered_map<int, llvm::BasicBlock*> id2bb;
+    std::unordered_map<int, llvm::Value*> id2value;
+
+    auto&& calc_new_centersFunc = module->getFunction("calc_new_centers");
+    llvm::BasicBlock *entry = llvm::BasicBlock::Create(module->getContext(), "entrypoint", calc_new_centersFunc);
+    builder->SetInsertPoint(entry);
+
+    id2bb[10] = llvm::BasicBlock::Create(module->getContext(), "10", calc_new_centersFunc );
+    id2bb[13] = llvm::BasicBlock::Create(module->getContext(), "13", calc_new_centersFunc );
+    id2bb[23] = llvm::BasicBlock::Create(module->getContext(), "23", calc_new_centersFunc );
+    id2bb[26] = llvm::BasicBlock::Create(module->getContext(), "26", calc_new_centersFunc );
+    id2bb[27] = llvm::BasicBlock::Create(module->getContext(), "27", calc_new_centersFunc );
+    id2bb[30] = llvm::BasicBlock::Create(module->getContext(), "30", calc_new_centersFunc );
+    id2bb[31] = llvm::BasicBlock::Create(module->getContext(), "31", calc_new_centersFunc );
+    id2bb[34] = llvm::BasicBlock::Create(module->getContext(), "34", calc_new_centersFunc );
+    id2bb[44] = llvm::BasicBlock::Create(module->getContext(), "44", calc_new_centersFunc );
+    id2bb[97] = llvm::BasicBlock::Create(module->getContext(), "97", calc_new_centersFunc );
+    id2bb[98] = llvm::BasicBlock::Create(module->getContext(), "98", calc_new_centersFunc );
+    id2bb[101] = llvm::BasicBlock::Create(module->getContext(), "101", calc_new_centersFunc );
+    id2bb[102] = llvm::BasicBlock::Create(module->getContext(), "102", calc_new_centersFunc );
+    id2bb[105] = llvm::BasicBlock::Create(module->getContext(), "105", calc_new_centersFunc );
+    id2bb[106] = llvm::BasicBlock::Create(module->getContext(), "106", calc_new_centersFunc );
+    id2bb[109] = llvm::BasicBlock::Create(module->getContext(), "109", calc_new_centersFunc );
+    id2bb[126] = llvm::BasicBlock::Create(module->getContext(), "126", calc_new_centersFunc );
+    id2bb[129] = llvm::BasicBlock::Create(module->getContext(), "129", calc_new_centersFunc );
+    id2bb[135] = llvm::BasicBlock::Create(module->getContext(), "135", calc_new_centersFunc );
+    id2bb[152] = llvm::BasicBlock::Create(module->getContext(), "152", calc_new_centersFunc );
+    id2bb[155] = llvm::BasicBlock::Create(module->getContext(), "155", calc_new_centersFunc );
+    id2bb[161] = llvm::BasicBlock::Create(module->getContext(), "161", calc_new_centersFunc );
+    id2bb[162] = llvm::BasicBlock::Create(module->getContext(), "162", calc_new_centersFunc );
+    id2bb[165] = llvm::BasicBlock::Create(module->getContext(), "165", calc_new_centersFunc );
+
+//   %1 = alloca i32, align 4
+//   %2 = alloca i32, align 4
+//   %3 = alloca [10 x i32], align 16
+//   %4 = alloca [10 x i32], align 16
+//   %5 = alloca [10 x i32], align 16
+//   %6 = alloca i32, align 4
+//   %7 = alloca i32, align 4
+//   %8 = alloca i32, align 4
+//   %9 = alloca i32, align 4
+//   store i32 0, i32* %1, align 4
+//   store i32 0, i32* %2, align 4
+//   store i32 0, i32* %6, align 4
+//   br label %10
+
+// 10:                                               ; preds = %23, %0
+//   %11 = load i32, i32* %6, align 4
+//   %12 = icmp slt i32 %11, 10
+//   br i1 %12, label %13, label %26
+
+// 13:                                               ; preds = %10
+//   %14 = load i32, i32* %6, align 4
+//   %15 = sext i32 %14 to i64
+//   %16 = getelementptr inbounds [10 x i32], [10 x i32]* %3, i64 0, i64 %15
+//   store i32 0, i32* %16, align 4
+//   %17 = load i32, i32* %6, align 4
+//   %18 = sext i32 %17 to i64
+//   %19 = getelementptr inbounds [10 x i32], [10 x i32]* %4, i64 0, i64 %18
+//   store i32 0, i32* %19, align 4
+//   %20 = load i32, i32* %6, align 4
+//   %21 = sext i32 %20 to i64
+//   %22 = getelementptr inbounds [10 x i32], [10 x i32]* %5, i64 0, i64 %21
+//   store i32 0, i32* %22, align 4
+//   br label %23
+
+// 23:                                               ; preds = %13
+//   %24 = load i32, i32* %6, align 4
+//   %25 = add nsw i32 %24, 1
+//   store i32 %25, i32* %6, align 4
+//   br label %10
+
+// 26:                                               ; preds = %10
+//   store i32 0, i32* %7, align 4
+//   br label %27
+
+// 27:                                               ; preds = %102, %26
+//   %28 = load i32, i32* %7, align 4
+//   %29 = icmp slt i32 %28, 800
+//   br i1 %29, label %30, label %105
+
+// 30:                                               ; preds = %27
+//   store i32 0, i32* %8, align 4
+//   br label %31
+
+// 31:                                               ; preds = %98, %30
+//   %32 = load i32, i32* %8, align 4
+//   %33 = icmp slt i32 %32, 800
+//   br i1 %33, label %34, label %101
+
+// 34:                                               ; preds = %31
+//   %35 = load i32, i32* %7, align 4
+//   %36 = sext i32 %35 to i64
+//   %37 = getelementptr inbounds [800 x [800 x %struct.Point]], [800 x [800 x %struct.Point]]* @pixels, i64 0, i64 %36
+//   %38 = load i32, i32* %8, align 4
+//   %39 = sext i32 %38 to i64
+//   %40 = getelementptr inbounds [800 x %struct.Point], [800 x %struct.Point]* %37, i64 0, i64 %39
+//   %41 = getelementptr inbounds %struct.Point, %struct.Point* %40, i32 0, i32 0
+//   %42 = load i32, i32* %41, align 4
+//   %43 = icmp sge i32 %42, 0
+//   br i1 %43, label %44, label %97
+
+// 44:                                               ; preds = %34
+//   %45 = load i32, i32* %7, align 4
+//   %46 = sext i32 %45 to i64
+//   %47 = getelementptr inbounds [800 x [800 x %struct.Point]], [800 x [800 x %struct.Point]]* @pixels, i64 0, i64 %46
+//   %48 = load i32, i32* %8, align 4
+//   %49 = sext i32 %48 to i64
+//   %50 = getelementptr inbounds [800 x %struct.Point], [800 x %struct.Point]* %47, i64 0, i64 %49
+//   %51 = getelementptr inbounds %struct.Point, %struct.Point* %50, i32 0, i32 1
+//   %52 = load i32, i32* %51, align 4
+//   %53 = load i32, i32* %7, align 4
+//   %54 = sext i32 %53 to i64
+//   %55 = getelementptr inbounds [800 x [800 x %struct.Point]], [800 x [800 x %struct.Point]]* @pixels, i64 0, i64 %54
+//   %56 = load i32, i32* %8, align 4
+//   %57 = sext i32 %56 to i64
+//   %58 = getelementptr inbounds [800 x %struct.Point], [800 x %struct.Point]* %55, i64 0, i64 %57
+//   %59 = getelementptr inbounds %struct.Point, %struct.Point* %58, i32 0, i32 0
+//   %60 = load i32, i32* %59, align 4
+//   %61 = sext i32 %60 to i64
+//   %62 = getelementptr inbounds [10 x i32], [10 x i32]* %3, i64 0, i64 %61
+//   %63 = load i32, i32* %62, align 4
+//   %64 = add nsw i32 %63, %52
+//   store i32 %64, i32* %62, align 4
+//   %65 = load i32, i32* %7, align 4
+//   %66 = sext i32 %65 to i64
+//   %67 = getelementptr inbounds [800 x [800 x %struct.Point]], [800 x [800 x %struct.Point]]* @pixels, i64 0, i64 %66
+//   %68 = load i32, i32* %8, align 4
+//   %69 = sext i32 %68 to i64
+//   %70 = getelementptr inbounds [800 x %struct.Point], [800 x %struct.Point]* %67, i64 0, i64 %69
+//   %71 = getelementptr inbounds %struct.Point, %struct.Point* %70, i32 0, i32 2
+//   %72 = load i32, i32* %71, align 4
+//   %73 = load i32, i32* %7, align 4
+//   %74 = sext i32 %73 to i64
+//   %75 = getelementptr inbounds [800 x [800 x %struct.Point]], [800 x [800 x %struct.Point]]* @pixels, i64 0, i64 %74
+//   %76 = load i32, i32* %8, align 4
+//   %77 = sext i32 %76 to i64
+//   %78 = getelementptr inbounds [800 x %struct.Point], [800 x %struct.Point]* %75, i64 0, i64 %77
+//   %79 = getelementptr inbounds %struct.Point, %struct.Point* %78, i32 0, i32 0
+//   %80 = load i32, i32* %79, align 4
+//   %81 = sext i32 %80 to i64
+//   %82 = getelementptr inbounds [10 x i32], [10 x i32]* %4, i64 0, i64 %81
+//   %83 = load i32, i32* %82, align 4
+//   %84 = add nsw i32 %83, %72
+//   store i32 %84, i32* %82, align 4
+//   %85 = load i32, i32* %7, align 4
+//   %86 = sext i32 %85 to i64
+//   %87 = getelementptr inbounds [800 x [800 x %struct.Point]], [800 x [800 x %struct.Point]]* @pixels, i64 0, i64 %86
+//   %88 = load i32, i32* %8, align 4
+//   %89 = sext i32 %88 to i64
+//   %90 = getelementptr inbounds [800 x %struct.Point], [800 x %struct.Point]* %87, i64 0, i64 %89
+//   %91 = getelementptr inbounds %struct.Point, %struct.Point* %90, i32 0, i32 0
+//   %92 = load i32, i32* %91, align 4
+//   %93 = sext i32 %92 to i64
+//   %94 = getelementptr inbounds [10 x i32], [10 x i32]* %5, i64 0, i64 %93
+//   %95 = load i32, i32* %94, align 4
+//   %96 = add nsw i32 %95, 1
+//   store i32 %96, i32* %94, align 4
+//   br label %97
+
+// 97:                                               ; preds = %44, %34
+//   br label %98
+
+// 98:                                               ; preds = %97
+//   %99 = load i32, i32* %8, align 4
+//   %100 = add nsw i32 %99, 1
+//   store i32 %100, i32* %8, align 4
+//   br label %31
+
+// 101:                                              ; preds = %31
+//   br label %102
+
+// 102:                                              ; preds = %101
+//   %103 = load i32, i32* %7, align 4
+//   %104 = add nsw i32 %103, 1
+//   store i32 %104, i32* %7, align 4
+//   br label %27
+
+// 105:                                              ; preds = %27
+//   store i32 0, i32* %9, align 4
+//   br label %106
+
+// 106:                                              ; preds = %162, %105
+//   %107 = load i32, i32* %9, align 4
+//   %108 = icmp slt i32 %107, 10
+//   br i1 %108, label %109, label %165
+
+// 109:                                              ; preds = %106
+//   %110 = load i32, i32* %9, align 4
+//   %111 = sext i32 %110 to i64
+//   %112 = getelementptr inbounds [10 x i32], [10 x i32]* %3, i64 0, i64 %111
+//   %113 = load i32, i32* %112, align 4
+//   %114 = load i32, i32* %9, align 4
+//   %115 = sext i32 %114 to i64
+//   %116 = getelementptr inbounds [10 x i32], [10 x i32]* %5, i64 0, i64 %115
+//   %117 = load i32, i32* %116, align 4
+//   %118 = sdiv i32 %113, %117
+//   store i32 %118, i32* %2, align 4
+//   %119 = load i32, i32* %9, align 4
+//   %120 = sext i32 %119 to i64
+//   %121 = getelementptr inbounds [10 x %struct.Point], [10 x %struct.Point]* @points, i64 0, i64 %120
+//   %122 = getelementptr inbounds %struct.Point, %struct.Point* %121, i32 0, i32 1
+//   %123 = load i32, i32* %122, align 4
+//   %124 = load i32, i32* %2, align 4
+//   %125 = icmp eq i32 %123, %124
+//   br i1 %125, label %126, label %129
+
+// 126:                                              ; preds = %109
+//   %127 = load i32, i32* %1, align 4
+//   %128 = add nsw i32 %127, 1
+//   store i32 %128, i32* %1, align 4
+//   br label %135
+
+// 129:                                              ; preds = %109
+//   %130 = load i32, i32* %2, align 4
+//   %131 = load i32, i32* %9, align 4
+//   %132 = sext i32 %131 to i64
+//   %133 = getelementptr inbounds [10 x %struct.Point], [10 x %struct.Point]* @points, i64 0, i64 %132
+//   %134 = getelementptr inbounds %struct.Point, %struct.Point* %133, i32 0, i32 1
+//   store i32 %130, i32* %134, align 4
+//   br label %135
+
+// 135:                                              ; preds = %129, %126
+//   %136 = load i32, i32* %9, align 4
+//   %137 = sext i32 %136 to i64
+//   %138 = getelementptr inbounds [10 x i32], [10 x i32]* %4, i64 0, i64 %137
+//   %139 = load i32, i32* %138, align 4
+//   %140 = load i32, i32* %9, align 4
+//   %141 = sext i32 %140 to i64
+//   %142 = getelementptr inbounds [10 x i32], [10 x i32]* %5, i64 0, i64 %141
+//   %143 = load i32, i32* %142, align 4
+//   %144 = sdiv i32 %139, %143
+//   store i32 %144, i32* %2, align 4
+//   %145 = load i32, i32* %9, align 4
+//   %146 = sext i32 %145 to i64
+//   %147 = getelementptr inbounds [10 x %struct.Point], [10 x %struct.Point]* @points, i64 0, i64 %146
+//   %148 = getelementptr inbounds %struct.Point, %struct.Point* %147, i32 0, i32 2
+//   %149 = load i32, i32* %148, align 4
+//   %150 = load i32, i32* %2, align 4
+//   %151 = icmp eq i32 %149, %150
+//   br i1 %151, label %152, label %155
+
+// 152:                                              ; preds = %135
+//   %153 = load i32, i32* %1, align 4
+//   %154 = add nsw i32 %153, 1
+//   store i32 %154, i32* %1, align 4
+//   br label %161
+
+// 155:                                              ; preds = %135
+//   %156 = load i32, i32* %2, align 4
+//   %157 = load i32, i32* %9, align 4
+//   %158 = sext i32 %157 to i64
+//   %159 = getelementptr inbounds [10 x %struct.Point], [10 x %struct.Point]* @points, i64 0, i64 %158
+//   %160 = getelementptr inbounds %struct.Point, %struct.Point* %159, i32 0, i32 2
+//   store i32 %156, i32* %160, align 4
+//   br label %161
+
+// 161:                                              ; preds = %155, %152
+//   br label %162
+
+// 162:                                              ; preds = %161
+//   %163 = load i32, i32* %9, align 4
+//   %164 = add nsw i32 %163, 1
+//   store i32 %164, i32* %9, align 4
+//   br label %106
+
+// 165:                                              ; preds = %106
+//   %166 = load i32, i32* %1, align 4
+//   ret i32 %166
+}
 
 void set_timer_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
 
@@ -742,7 +1013,6 @@ void main_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
 
 }
 
-
 void create_declarations(llvm::Module* module, llvm::IRBuilder<>* builder) {
     // declare void @main()
     llvm::FunctionType *funcType = 
@@ -793,8 +1063,8 @@ int main() {
     //reset_picture_codegen(module, &builder);
     //calc_vor_diag_codegen(module, &builder);
     //dist_codegen(module, &builder);
-    //calc_new_centers_codegen(module, &builder);
-    timf_codegen(module, &builder);
+    calc_new_centers_codegen(module, &builder);
+    //timf_codegen(module, &builder);
     //set_timer_codegen(module, &builder);
     //display_codegen(module, &builder);
     dump_codegen(module);
