@@ -908,6 +908,82 @@ void display_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
     builder->CreateRetVoid();
 }
 
+
+void timf_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
+
+    std::unordered_map<int, llvm::BasicBlock*> id2bb;
+    std::unordered_map<int, llvm::Value*> id2value;
+
+    auto&& timfFunc = module->getFunction("timf");
+    llvm::BasicBlock *entry = llvm::BasicBlock::Create(module->getContext(), "entrypoint", timfFunc);
+    builder->SetInsertPoint(entry);
+
+    id2bb[5] = llvm::BasicBlock::Create(module->getContext(), "5", timfFunc );
+    id2bb[8] = llvm::BasicBlock::Create(module->getContext(), "8", timfFunc );
+    id2bb[9] = llvm::BasicBlock::Create(module->getContext(), "9", timfFunc );
+    id2bb[10] = llvm::BasicBlock::Create(module->getContext(), "10", timfFunc );
+    id2bb[11] = llvm::BasicBlock::Create(module->getContext(), "11", timfFunc );
+
+//   %2 = alloca i32, align 4
+//   store i32 %0, i32* %2, align 4
+//   %3 = load i32, i32* @flag_no_recalc, align 4
+//   %4 = icmp eq i32 %3, 0
+//   br i1 %4, label %5, label %11
+
+    id2value[2] = builder->CreateAlloca(builder->getInt32Ty());
+    //builder->CreateStore(id2value[0], id2value[2]);
+    auto flag_no_recalc = module->getGlobalVariable("flag_no_recalc");
+    id2value[3] = builder->CreateLoad(builder->getInt32Ty(), flag_no_recalc);
+    id2value[4] = builder->CreateICmpEQ(id2value[3], llvm::ConstantInt::get(builder->getInt32Ty(), 0));
+    builder->CreateCondBr(id2value[4], id2bb[5], id2bb[11]);
+
+// 5:                                                ; preds = %1
+//   %6 = call i32 @calc_new_centers()
+//   %7 = icmp slt i32 %6, 20
+//   br i1 %7, label %8, label %9
+    builder->SetInsertPoint(id2bb[5]);
+    auto calc_new_centersFunc = module->getFunction("calc_new_centers");
+    id2value[6] = builder->CreateCall(calc_new_centersFunc);
+    id2value[7] = builder->CreateICmpSLT(id2value[6], llvm::ConstantInt::get(builder->getInt32Ty(), 20));
+    builder->CreateCondBr(id2value[7], id2bb[8], id2bb[9]);
+
+
+// 8:                                                ; preds = %5
+//   call void @display()
+//   br label %10
+
+    builder->SetInsertPoint(id2bb[8]);
+    auto displayFunc = module->getFunction("display");
+    builder->CreateCall(displayFunc);
+    builder->CreateBr(id2bb[10]);
+
+
+// 9:                                                ; preds = %5
+//   store i32 1, i32* @flag_no_recalc, align 4
+//   br label %10
+    builder->SetInsertPoint(id2bb[9]);
+    builder->CreateStore(llvm::ConstantInt::get(builder->getInt32Ty(), 1), flag_no_recalc);
+    builder->CreateBr(id2bb[10]);
+
+
+// 10:                                               ; preds = %9, %8
+//   br label %11
+
+    builder->SetInsertPoint(id2bb[10]);
+    builder->CreateBr(id2bb[11]);
+
+// 11:                                               ; preds = %10, %1
+//   %12 = load i32, i32* %2, align 4
+//   call void @set_timer(i32 %12)
+//   ret void
+    builder->SetInsertPoint(id2bb[11]);
+    id2value[12] = builder->CreateLoad(builder->getInt32Ty(), id2value[2]);
+    auto set_timerFunc = module->getFunction("set_timer");
+    builder->CreateCall(set_timerFunc);
+    builder->CreateRetVoid();
+}
+
+
 void set_timer_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
 
     std::unordered_map<int, llvm::BasicBlock*> id2bb;
@@ -1292,8 +1368,8 @@ int main() {
     //reset_picture_codegen(module, &builder);
     //calc_vor_diag_codegen(module, &builder);
     //dist_codegen(module, &builder);
-    // calc_new_centers_codegen(module, &builder);
-    // calc_timf_codegen(module, &builder);
+    //calc_new_centers_codegen(module, &builder);
+    timf_codegen(module, &builder);
     //set_timer_codegen(module, &builder);
     //display_codegen(module, &builder);
     dump_codegen(module);
