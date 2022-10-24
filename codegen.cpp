@@ -792,7 +792,8 @@ void display_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
     std::unordered_map<int, llvm::BasicBlock*> id2bb;
     std::unordered_map<int, llvm::Value*> id2value;
     auto&& displayFunc = module->getFunction("display");
-
+    llvm::BasicBlock *entry = llvm::BasicBlock::Create(module->getContext(), "entrypoint", displayFunc);
+    builder->SetInsertPoint(entry);
     id2bb[3] = llvm::BasicBlock::Create(module->getContext(), "3", displayFunc );
     id2bb[6] = llvm::BasicBlock::Create(module->getContext(), "6", displayFunc );
     id2bb[7] = llvm::BasicBlock::Create(module->getContext(), "7", displayFunc );
@@ -802,29 +803,51 @@ void display_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
     id2bb[21] = llvm::BasicBlock::Create(module->getContext(), "21", displayFunc );
     id2bb[24] = llvm::BasicBlock::Create(module->getContext(), "24", displayFunc );
 
-    llvm::BasicBlock *entry = llvm::BasicBlock::Create(module->getContext(), "entrypoint", displayFunc);
-    builder->SetInsertPoint(entry);
+
 //   %1 = alloca i32, align 4
 //   %2 = alloca i32, align 4
 //   call void @calc_vor_diag()
 //   call void (...) @gl_start()
 //   store i32 0, i32* %1, align 4
 //   br label %3
+    id2value[1] = builder->CreateAlloca(builder->getInt32Ty());
+    id2value[2] = builder->CreateAlloca(builder->getInt32Ty());
+    auto calc_vor_diagFunc = module->getFunction("calc_vor_diag");
+    builder->CreateCall(calc_vor_diagFunc);
+    auto gl_startFunc = module->getFunction("gl_start");
+    builder->CreateCall(gl_startFunc);
+    builder->CreateStore(llvm::ConstantInt::get(builder->getInt32Ty(), 0), id2value[1]);
+    builder->CreateBr(id2bb[3]);
 
 // 3:                                                ; preds = %21, %0
 //   %4 = load i32, i32* %1, align 4
 //   %5 = icmp slt i32 %4, 800
 //   br i1 %5, label %6, label %24
 
+    builder->SetInsertPoint(id2bb[3]);
+    id2value[4] = builder->CreateLoad(builder->getInt32Ty(), id2value[1]);
+    id2value[5] = builder->CreateICmpSLT(id2value[4], llvm::ConstantInt::get(builder->getInt32Ty(), 800));
+    builder->CreateCondBr(id2value[5], id2bb[6], id2bb[24]);
+
 // 6:                                                ; preds = %3
 //   store i32 0, i32* %2, align 4
 //   br label %7
+
+    builder->SetInsertPoint(id2bb[6]);
+    builder->CreateStore(llvm::ConstantInt::get(builder->getInt32Ty(), 0), id2value[2]);
+    builder->CreateBr(id2bb[7]);
+
 
 // 7:                                                ; preds = %17, %6
 //   %8 = load i32, i32* %2, align 4
 //   %9 = icmp slt i32 %8, 800
 //   br i1 %9, label %10, label %20
 
+
+    builder->SetInsertPoint(id2bb[7]);
+    id2value[8] = builder->CreateLoad(builder->getInt32Ty(), id2value[2]);
+    id2value[9] = builder->CreateICmpSLT(id2value[8], llvm::ConstantInt::get(builder->getInt32Ty(), 800));
+    builder->CreateCondBr(id2value[11], id2bb[10], id2bb[20]);
 // 10:                                               ; preds = %7
 //   %11 = load i32, i32* %1, align 4
 //   %12 = sext i32 %11 to i64
@@ -835,25 +858,53 @@ void display_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
 //   call void @gl_put_pixel(%struct.Point* %16)
 //   br label %17
 
+    builder->SetInsertPoint(id2bb[10]);
+    id2value[11] = builder->CreateLoad(builder->getInt32Ty(), id2value[1]);
+    id2value[12] = builder->CreateSExt(id2value[11], builder->getInt64Ty());
+    auto&& pixels = module->getGlobalVariable("pixels");
+    auto&& points = module->getGlobalVariable("points");
+
+    //id2value[13] = builder->CreateInBoundsGEP(pixels->getValueType(), pixels, {llvm::ConstantInt::get(builder->getInt64Ty(), 0) , id2value[12]});
+    id2value[14] = builder->CreateLoad(builder->getInt32Ty(), id2value[2]);
+    id2value[15] = builder->CreateSExt(id2value[14], builder->getInt64Ty());
+    //id2value[16] = builder->CreateInBoundsGEP(pixels[0]->getValueType(), id2value[13], {llvm::ConstantInt::get(builder->getInt32Ty(),0), id2value[15]});
+    auto gl_put_pixelFunc = module->getFunction("gl_put_pixel");
+    builder->CreateCall(gl_put_pixelFunc, id2value[16]);
+    builder->CreateBr(id2bb[17]);
+
 // 17:                                               ; preds = %10
 //   %18 = load i32, i32* %2, align 4
 //   %19 = add nsw i32 %18, 1
 //   store i32 %19, i32* %2, align 4
 //   br label %7
 
+
+    builder->SetInsertPoint(id2bb[17]);
+    id2value[18] = builder->CreateLoad(builder->getInt32Ty(), id2value[2]);
+    id2value[19] = builder->CreateNSWAdd(id2value[18],llvm::ConstantInt::get(builder->getInt64Ty(), 1) );
+    builder->CreateStore(id2value[19], id2value[2]);
+    builder->CreateBr(id2bb[7]);
+
 // 20:                                               ; preds = %7
 //   br label %21
-
+    builder->SetInsertPoint(id2bb[20]);
+    builder->CreateBr(id2bb[21]);
 // 21:                                               ; preds = %20
 //   %22 = load i32, i32* %1, align 4
 //   %23 = add nsw i32 %22, 1
 //   store i32 %23, i32* %1, align 4
 //   br label %3
-
+    builder->SetInsertPoint(id2bb[21]);
+    id2value[22] = builder->CreateLoad(builder->getInt32Ty(), id2value[2]);
+    id2value[23] = builder->CreateNSWAdd(id2value[18],llvm::ConstantInt::get(builder->getInt64Ty(), 1) );
+    builder->CreateStore(id2value[23], id2value[1]);
+    builder->CreateBr(id2bb[3]);
 // 24:                                               ; preds = %3
 //   call void (...) @gl_flush()
 //   ret void
-
+    builder->SetInsertPoint(id2bb[24]);
+    auto gl_flushFunc = module->getFunction("gl_flush");
+    builder->CreateCall(gl_flushFunc);
     builder->CreateRetVoid();
 }
 
@@ -1208,6 +1259,9 @@ void create_declarations(llvm::Module* module, llvm::IRBuilder<>* builder) {
     llvm::Function::Create(llvm::FunctionType::get(builder->getInt32Ty(), {Point, Point}, false), llvm::Function::ExternalLinkage, "dist", module);
     llvm::Function::Create(llvm::FunctionType::get(builder->getVoidTy(), builder->getInt32Ty(),false), llvm::Function::ExternalLinkage, "set_timer", module);
     llvm::Function::Create(llvm::FunctionType::get(builder->getInt32Ty(),false), llvm::Function::ExternalLinkage, "calc_new_centers", module);
+    llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, "gl_start", module);
+    llvm::Function::Create(llvm::FunctionType::get(builder->getVoidTy(), Point->getPointerTo(),false), llvm::Function::ExternalLinkage, "gl_put_pixel", module);
+    llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, "gl_flush", module);
 
 }
 
@@ -1234,14 +1288,14 @@ int main() {
     module->getNamedGlobal("show_window")->setLinkage(llvm::GlobalVariable::InternalLinkage);
     module->getNamedGlobal("show_window")->setInitializer(llvm::ConstantInt::get(builder.getInt1Ty(), 0));
     create_declarations(module, &builder);
-    main_codegen(module, &builder);
-    reset_picture_codegen(module, &builder);
-    calc_vor_diag_codegen(module, &builder);
-    dist_codegen(module, &builder);
-    display_codegen(module, &builder);
+    //main_codegen(module, &builder);
+    //reset_picture_codegen(module, &builder);
+    //calc_vor_diag_codegen(module, &builder);
+    //dist_codegen(module, &builder);
     // calc_new_centers_codegen(module, &builder);
     // calc_timf_codegen(module, &builder);
-    set_timer_codegen(module, &builder);
+    //set_timer_codegen(module, &builder);
+    //display_codegen(module, &builder);
     dump_codegen(module);
     return 0;
 
