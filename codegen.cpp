@@ -132,7 +132,8 @@ void dist_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
     auto&& distFunc = module->getFunction("dist");
     llvm::BasicBlock *entry = llvm::BasicBlock::Create(module->getContext(), "entrypoint", distFunc);
     builder->SetInsertPoint(entry);
-
+    id2value[0] = distFunc->getArg(0);
+    id2value[1] = distFunc->getArg(1);
 //   %3 = alloca %struct.Point*, align 8
 //   %4 = alloca %struct.Point*, align 8
 //   store %struct.Point* %0, %struct.Point** %3, align 8
@@ -154,8 +155,8 @@ void dist_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
     id2value[3] = builder->CreateAlloca(Point);
     id2value[4] = builder->CreateAlloca(Point);
 
-    // builder->CreateStore(id2value[0], id2value[3]);
-    // builder->CreateStore(id2value[1], id2value[4]);
+    builder->CreateStore(id2value[0], id2value[3]);
+    builder->CreateStore(id2value[1], id2value[4]);
     id2value[5] = builder->CreateLoad(Point, id2value[4]);
     //id2value[6] = builder->CreateInBoundsGEP(Point, id2value[5], {llvm::ConstantInt::get(builder->getInt32Ty(), 0) , llvm::ConstantInt::get(builder->getInt32Ty(), 1)} );
     id2value[7] = builder->CreateLoad(builder->getInt32Ty(), id2value[6]);
@@ -341,7 +342,7 @@ void timf_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
     auto&& timfFunc = module->getFunction("timf");
     llvm::BasicBlock *entry = llvm::BasicBlock::Create(module->getContext(), "entrypoint", timfFunc);
     builder->SetInsertPoint(entry);
-
+    id2value[0] = timfFunc->getArg(0);
     id2bb[5] = llvm::BasicBlock::Create(module->getContext(), "5", timfFunc );
     id2bb[8] = llvm::BasicBlock::Create(module->getContext(), "8", timfFunc );
     id2bb[9] = llvm::BasicBlock::Create(module->getContext(), "9", timfFunc );
@@ -355,7 +356,7 @@ void timf_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
 //   br i1 %4, label %5, label %11
 
     id2value[2] = builder->CreateAlloca(builder->getInt32Ty());
-    //builder->CreateStore(id2value[0], id2value[2]);
+    builder->CreateStore(id2value[0], id2value[2]);
     auto flag_no_recalc = module->getGlobalVariable("flag_no_recalc");
     id2value[3] = builder->CreateLoad(builder->getInt32Ty(), flag_no_recalc);
     id2value[4] = builder->CreateICmpEQ(id2value[3], llvm::ConstantInt::get(builder->getInt32Ty(), 0));
@@ -961,13 +962,14 @@ void set_timer_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
     auto&& set_timerFunc = module->getFunction("set_timer");
     llvm::BasicBlock *entry = llvm::BasicBlock::Create(module->getContext(), "entrypoint", set_timerFunc);
     builder->SetInsertPoint(entry);
+    id2value[0] = set_timerFunc->getArg(0);
 
 //   %2 = alloca i32, align 4
 //   store i32 %0, i32* %2, align 4
 //   ret void
 
     id2value[2] = builder->CreateAlloca(builder->getInt32Ty());
-    //builder->CreateStore(id2value[0], id2value[2]);
+    builder->CreateStore(id2value[0], id2value[2]);
     builder->CreateRetVoid();
 }
 
@@ -1259,7 +1261,10 @@ void main_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
     std::unordered_map<int, llvm::BasicBlock*> id2bb;
     std::unordered_map<int, llvm::Value*> id2value;
     builder->SetInsertPoint(entry);
+    
     std::cout << "aft entrypoint" << std::endl;
+    id2value[0] = mainFunc->getArg(0);
+    id2value[1] = mainFunc->getArg(1);
     id2value[3] = builder->CreateAlloca(builder->getInt32Ty());
     id2value[4] = builder->CreateAlloca(builder->getInt32Ty());
     id2value[5] = builder->CreateAlloca(builder->getInt8PtrTy()->getPointerTo());
@@ -1267,9 +1272,9 @@ void main_codegen(llvm::Module* module, llvm::IRBuilder<>* builder) {
 
     builder->CreateStore(llvm::ConstantInt::get(builder->getInt32Ty(), 0), id2value[3]);
     std::cout << "aft 1store" << std::endl;
-    //builder->CreateStore(id2value[0], id2value[4]);
+    builder->CreateStore(id2value[0], id2value[4]);
     std::cout << "aft 2store" << std::endl;
-    //builder->CreateStore(id2value[1], id2value[5]);
+    builder->CreateStore(id2value[1], id2value[5]);
     std::cout << "aft 3store" << std::endl;
 
     id2value[6] = builder->CreateLoad(builder->getInt32Ty(), id2value[4]);
@@ -1332,14 +1337,14 @@ int main() {
     module->getNamedGlobal("show_window")->setLinkage(llvm::GlobalVariable::InternalLinkage);
     module->getNamedGlobal("show_window")->setInitializer(llvm::ConstantInt::get(builder.getInt1Ty(), 0));
     create_declarations(module, &builder);
-    //main_codegen(module, &builder);
-    //reset_picture_codegen(module, &builder);
-    //calc_vor_diag_codegen(module, &builder);
-    //dist_codegen(module, &builder);
+    main_codegen(module, &builder);
+    reset_picture_codegen(module, &builder);
+    calc_vor_diag_codegen(module, &builder);
+    dist_codegen(module, &builder);
     calc_new_centers_codegen(module, &builder);
-    //timf_codegen(module, &builder);
-    //set_timer_codegen(module, &builder);
-    //display_codegen(module, &builder);
+    timf_codegen(module, &builder);
+    set_timer_codegen(module, &builder);
+    display_codegen(module, &builder);
     dump_codegen(module);
     return 0;
 
