@@ -213,7 +213,7 @@ RoutineDeclaration : Type Identifier '('Params')''{' {
 
 Statements: %empty
             | Statements Assignment {printf("Statements Assignment\n");}
-            | Statements RoutineCall {printf("Statements RoutineCall\n");}
+            | Statements RoutineCall ';' {printf("Statements RoutineCall\n");}
             | Statements IfStatement {printf("Statements IfStatement\n");}
             | Statements While {printf("Statements While\n");}
             | Statements For {printf("Statements For\n");}
