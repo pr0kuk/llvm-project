@@ -7,7 +7,12 @@
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
 #include "llvm/ExecutionEngine/GenericValue.h"
 #include "llvm/Support/TargetSelect.h"
+#include "llvm/IR/DataLayout.h"
+#include "llvm/IR/Instructions.h"
+
+
 #include <vector>
+#include <stack>  
 #define YYSTYPE llvm::Value*
 extern "C" {
     int yyparse();
@@ -23,7 +28,7 @@ llvm::LLVMContext context;
 llvm::IRBuilder<>* builder;
 llvm::Module* module;
 llvm::Function *curFunc;
-
+std::vector<std::vector<std::pair<llvm::Value*, llvm::Value*>>> peremens;
 typedef struct {
     llvm::GlobalVariable* irVal;
     int realVal;
@@ -40,7 +45,8 @@ typedef struct {
     int* realVal;
 } array_t;
 std::map<std::string, array_t> ArrayMap;
-
+std::stack<int> FuncParams;
+std::stack<std::vector<llvm::Value *>> FuncParamsV;
 std::map<std::string, llvm::BasicBlock *> BBMap;
 
 int main(int argc, char **argv)
@@ -143,28 +149,29 @@ VariableDeclaration : Type Identifier '=' IntLiteral ';' {
                                                     ArrayMap.insert({(char*)$2, arr});
                                                 }
 
-Params : %empty {printf("Type Identifier NULL\n");}
-| Type Identifier {printf("Type Identifier");}
-    | Params ',' Type Identifier {printf("ParamsDecl, Type Identifier");}
+Params : %empty {printf("Type Identifier NULL\n"); FuncParams.push(0);}
+| Type Identifier {printf("Type Identifier");FuncParams.push(1); FuncParamsV.push({$2});}
+    | Params ',' Type Identifier {printf("ParamsDecl, Type Identifier"); int k = FuncParams.top(); FuncParams.pop(); FuncParams.push(k+1); FuncParamsV.top().push_back($4);}
 
 RoutineDeclaration : Type Identifier '('Params')''{' {
                                                     printf("FunctionBegin Identifier ...\n");
                                                     // declare void @Identifier()
                                                     llvm::Function *func = module->getFunction((char*)$2);
                                                     if (func == nullptr) {
-                                                        // int tt = 0;
+                                                        int tt = 0;
                                                         // char* s = (char*)$4;
                                                         // printf("s is %s\n", s);
                                                         // while(s) {
                                                         //     s = strstr(s, "int");
                                                         //     tt++;
                                                         // }
+                                                        tt = FuncParams.top();
                                                         std::vector <llvm::Type*> vparams = {};
-                                                        // for (int ttt = 0; ttt < tt; ttt++)
-                                                        // {
-                                                        //     vparams.push_back(builder->getInt32Ty());
-                                                        // }
-                                                        // printf("tt is %d\n", tt);
+                                                        for (int ttt = 0; ttt < tt; ttt++)
+                                                        {
+                                                            vparams.push_back(builder->getInt32Ty());
+                                                        }
+                                                        printf("tt is %d\n", tt);
                                                         llvm::FunctionType *funcType;
                                                         if (strncmp((char*)$1, "int", 3)) 
                                                             funcType = llvm::FunctionType::get(builder->getInt32Ty(), llvm::ArrayRef<llvm::Type*>(vparams), false);
@@ -177,10 +184,24 @@ RoutineDeclaration : Type Identifier '('Params')''{' {
                                                     // entry:
                                                     llvm::BasicBlock *entryBB = llvm::BasicBlock::Create(context, "entry", curFunc);
                                                     builder->SetInsertPoint(entryBB);
+                                                    //peremens.push_back()
+                                                    std::vector<std::pair<llvm::Value*, llvm::Value*>> pert;
+                                                    for (int ti = 0; ti < FuncParams.top(); ti++){
+                                                        //FuncParamsV.top()[ti] = builder->CreateAlloca(builder->getInt32Ty());
+                                                        //builder->CreateStore(func->getArg(ti), FuncParamsV.top()[ti]);}
+                                                        pert.push_back(std::make_pair(FuncParamsV.top()[ti], func->getArg(ti)));
+                                                    }
+                                                    printf("size PERT is %d\n", pert.size());
+                                                    if (pert.size() > 0)
+                                                        printf("PERT is %s\n", (char*)pert[0].first);
+                                                    peremens.push_back(pert);
+                                                    // FuncParams.pop();
+                                                    // FuncParamsV.pop();
+
                                                     printf("fbeg succs \n");
 } Statements returntoken Expression ';' '}' { 
                                                     printf("... Statements  Int Function Ret Start\n");
-                                                    // printf("ret is %s\n", (char*)$9 );
+                                                    //printf("ret is %s\n", (char*)$10 );
                                                     //auto&& load = builder->CreateLoad($2); 
                                                     //builder->CreateRet(llvm::ConstantInt::get(builder->getInt32Ty(), 1));
 
@@ -200,15 +221,15 @@ Statements: %empty
 
 Assignment: Value '=' Expression ';' { printf("Value '=' Expression ';'\n"); builder->CreateStore($3, $1); }
 
-RoutineCall: Identifier '(' Expression ')' ';' {
+RoutineCall: Identifier '(' Expression ')' {
                             printf("routine call started\n");
-                            llvm::Function *func = module->getFunction((char*)$2);
+                            llvm::Function *func = module->getFunction((char*)$1);
                             if (func == nullptr) {
                                 llvm::FunctionType *funcType = 
-                                                        llvm::FunctionType::get(builder->getVoidTy(), false);
-                                func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, (char*)$2, module);
+                                                        llvm::FunctionType::get(builder->getInt32Ty(), false);
+                                func = llvm::Function::Create(funcType, llvm::Function::ExternalLinkage, (char*)$1, module);
                             }
-                            builder->CreateCall(func);
+                            $$ = builder->CreateCall(func, $3);
                             printf("routine call finished\n");
 
                         }
@@ -290,6 +311,7 @@ Expression: Simple
             | Expression '<''=' Simple { $$ = builder->CreateZExt(builder->CreateICmpSLE($1, $4), builder->getInt32Ty()); }
             | Expression '>'    Simple { $$ = builder->CreateZExt(builder->CreateICmpSGT($1, $3), builder->getInt32Ty()); }
             | Expression '>''=' Simple { $$ = builder->CreateZExt(builder->CreateICmpSGE($1, $4), builder->getInt32Ty()); }
+            | RoutineCall
             | %empty
 ;
 Simple:     Summand
@@ -312,7 +334,18 @@ Primary:    IntLiteral { $$ = builder->getInt32(atoi((char*)$1)); }
 ;
 
 Value:      Identifier  {
-                            $$ = builder->CreateConstGEP1_32(ValueMap[(char*)$1].irVal, 0);
+                            if (ValueMap.find((char*)$1) != ValueMap.end()) {
+                                $$ = builder->CreateConstGEP1_32(ValueMap[(char*)$1].irVal, 0);
+                            }
+                            else {
+                                printf("searching %s in local peremens\n", (char*)$1);
+                                for (auto ii:peremens.back()) {
+                                    printf("i1.first is %s\n", (char*)ii.first);
+                                   // printf("i1.second is %d\n", (int)ii.second);
+
+                                    if (strcmp((char*)$1, (char*)ii.first), 1) {printf("FOUND\n"); $$ = builder->CreateAlloca(builder->getInt32Ty()); builder->CreateStore(ii.second, $$); }}
+                                //$$ = *(peremens.end())
+                            }
                         }
             | Identifier '[' Expression ']' {
                             llvm::ArrayType *arrayType = llvm::ArrayType::get(builder->getInt32Ty(), ArrayMap[(char*)$1].size);

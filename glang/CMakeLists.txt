@@ -10,7 +10,7 @@ include_directories(${LLVM_INCLUDE_DIRS})
 separate_arguments(LLVM_DEFINITIONS_LIST NATIVE_COMMAND ${LLVM_DEFINITIONS})
 add_definitions(${LLVM_DEFINITIONS_LIST})
 
-execute_process(COMMAND llvm-config-10 --libs all
+execute_process(COMMAND llvm-config-12 --libs all
                 OUTPUT_VARIABLE LLVM_LIBS2
                 OUTPUT_STRIP_TRAILING_WHITESPACE)
 
