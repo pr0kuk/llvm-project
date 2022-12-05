@@ -1,0 +1,102 @@
+#include "libs.h"
+
+static int show_window = 1;
+static int flag_no_recalc = 0;
+static struct Point points[NUMBER_OF_POINTS];
+static struct Point pixels[HEIGHT][WIDTH];
+struct Point *a;
+struct Point *b;
+int dist() {
+    return (b->x-a->x)*(b->x-a->x)+(b->y-a->y)*(b->y-a->y);
+}
+
+int calc_new_centers() {
+    int ret = 0, t = 0;
+    int sx[NUMBER_OF_POINTS], sy[NUMBER_OF_POINTS], ns[NUMBER_OF_POINTS]; 
+    for i from 0 to NUMBER_OF_POINTS {
+        sx[i] = 0;
+        sy[i] = 0;
+        ns[i] = 0;
+    }
+    for i from 0 to HEIGHT {
+        for j from 0 to WIDTH {
+            if (pixels[i][j].color >= 0) {
+                sx[pixels[i][j].color] = sx[pixels[i][j].color] + pixels[i][j].x;
+                sy[pixels[i][j].color] = sy[pixels[i][j].color] + pixels[i][j].y;
+                ns[pixels[i][j].color] = ns[pixels[i][j].color] + 1;
+                }
+            }
+        }
+    }
+    for i from 0 to NUMBER_OF_POINTS {
+        t = sx[i] / ns[i];
+        if (points[i].x == t)
+            ret += 1;
+        if (points[i].x != t)
+            points[i].x = t;
+        t = sy[i] / ns[i];
+        if (points[i].y == t)
+            ret += 1;
+        if (points[i].y != t)
+            points[i].y = t;
+    }
+    return ret;
+}
+
+void calc_vor_diag() {
+    for i from 0 to HEIGHT {
+        maxd = MAX_INT;
+        for j from 0 to WIDTH {
+            while k < NUMBER_OF_POINTS && maxd > 0 {
+                a = &pixels[i][j];
+                b = &points[k];
+                d = dist();
+                if (d < maxd)
+                    maxd = d, pixels[i][j].color = k;
+                k++;
+            }
+        pixels[i][j].x = j;
+        pixels[i][j].y = i;
+        maxd = MAX_INT;
+        }
+    }
+}
+
+void display() {
+    calc_vor_diag();
+    gl_start();
+    for i from 0 to HEIGHT {
+        for j from 0 to WIDTH {
+            gl_put_pixel(&pixels[i][j]);
+        }
+    }
+    gl_flush();
+}
+
+void loop() {
+    display();
+    while show_window == 1 {
+        calc_new_centers();
+        display();
+    }
+}
+
+void exit_loop() {
+    show_window = 0;
+}
+
+
+void reset_picture() {
+    for i from 0 to NUMBER_OF_POINTS {
+        points[i].x = int_rand() % WIDTH, points[i].y = int_rand() % HEIGHT;
+    }
+    calc_vor_diag();
+    flag_no_recalc = 0;
+}
+
+int main(int argc, char** argv) {
+    gl_init(argc, argv);
+    reset_picture();
+    loop();
+    return 0;
+}
