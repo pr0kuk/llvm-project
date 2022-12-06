@@ -23,6 +23,12 @@ extern "C" int yylex();
 "void"          { printf("type void\n"); return Type;}
 "from"          { printf("lit from\n"); return From;}
 "to"            { printf("lit to\n"); return To;}
+"gl_init"     {  printf("gl_init\n"); return GlInit;}
+"gl_put_pixel"     { printf("gl_putpixel\n"); return GlPutPixel;}
+"print"             { printf("print\n"); return print;}
+
+
+
 [A-Za-z_]+      { // identifier or array
                   printf("Identifier %s\n", yytext);
                   yylval = strdup(yytext);
